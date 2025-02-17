@@ -55,8 +55,26 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setTasksData(updatedTasksData);
   };
 
+  // Edits an existing task in tasksData.
+  const deleteTask = (deleteTask: ITask) => {
+    // Checks for id.
+    if (deleteTask.id === undefined) {
+      return;
+    }
+
+    // console.log(`Deleting task:`);
+    // console.log(deleteTask);
+
+    // Updates the task at the id of editTask.id.
+    const updatedTasksData = tasksData.filter((task) => {
+      return task.id !== deleteTask.id;
+    });
+
+    setTasksData(updatedTasksData);
+  };
+
   return (
-    <DataContext.Provider value={{ tasksData, addTask, editTask }}>
+    <DataContext.Provider value={{ tasksData, addTask, editTask, deleteTask }}>
       {children}
     </DataContext.Provider>
   );
