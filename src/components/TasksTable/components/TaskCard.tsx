@@ -5,6 +5,7 @@ import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import EditTaskModal from "../../../UI/FormModals/EditTaskModal";
+import DeleteTaskModal from "../../../UI/FormModals/DeleteTaskModal";
 
 // Functions
 import { formatStatus, formatPriority } from "./functions/formatData";
@@ -21,6 +22,8 @@ interface ITaskCard {
 
 export const TaskCard = ({ task }: ITaskCard) => {
   const [editTaskModalOpen, setEditTaskModalOpen] = useState<boolean>(false);
+  const [deleteTaskModalOpen, setDeleteTaskModalOpen] =
+    useState<boolean>(false);
 
   const context = use(DataContext);
 
@@ -30,7 +33,7 @@ export const TaskCard = ({ task }: ITaskCard) => {
   }
 
   // Using context
-  const { editTask } = context;
+  const { editTask, deleteTask } = context;
 
   const title = task.title;
   const status = formatStatus(task.status);
@@ -54,6 +57,26 @@ export const TaskCard = ({ task }: ITaskCard) => {
     editTask(editedTask);
   };
 
+  // Title for Delete Task modal.
+  const DeleteTaskTitle = "Delete Task";
+  const DeleteTaskDescription =
+    "Are you sure you want to PERMANENTELY delete this task? ";
+
+  // Opens Add Task Modal
+  const openDeleteTaskModal = () => {
+    setDeleteTaskModalOpen(true);
+  };
+
+  // Closes Add Task Modal
+  const closeDeleteTaskModal = () => {
+    setDeleteTaskModalOpen(false);
+  };
+
+  // Confirms adding task
+  const confirmDeleteTask = (deletedTask: ITask) => {
+    deleteTask(deletedTask);
+  };
+
   return (
     <tr className="bg-slate-30000">
       {editTaskModalOpen ? (
@@ -61,6 +84,15 @@ export const TaskCard = ({ task }: ITaskCard) => {
           title={EditTaskTitle}
           confirmAction={confirmEditTask}
           cancelAction={closeEditTaskModal}
+          task={task}
+        />
+      ) : null}
+      {deleteTaskModalOpen ? (
+        <DeleteTaskModal
+          title={DeleteTaskTitle}
+          description={DeleteTaskDescription}
+          confirmAction={confirmDeleteTask}
+          cancelAction={closeDeleteTaskModal}
           task={task}
         />
       ) : null}
@@ -79,7 +111,11 @@ export const TaskCard = ({ task }: ITaskCard) => {
         />
       </td>
       <td className="px-6 py-3 border-2 border-gray-300 text-center align-middle">
-        <FontAwesomeIcon icon={faTrash} className="text-xl text-red-700" />
+        <FontAwesomeIcon
+          icon={faTrash}
+          onClick={openDeleteTaskModal}
+          className="text-xl text-red-700 cursor-pointer"
+        />
       </td>
       <td className="p-2 border-2 border-gray-300 text-left">{title}</td>
       <td className="p-2 border-2 border-gray-300 text-left">{status}</td>
