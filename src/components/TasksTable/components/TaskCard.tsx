@@ -2,14 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
+// Functions
 import { formatStatus, formatPriority } from "./functions/formatData";
 
-interface ITask {
-  id: number;
-  title: string;
-  status: string;
-  priority: string;
-}
+// Types
+import { ITask } from "../../../types/types";
 
 interface ITaskCard {
   task: ITask;
