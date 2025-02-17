@@ -15,8 +15,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Stores length of tasks to use as id.
   // Currently using exampleData
+  // INDEX STARTS AT 1
   const [currentIndex, setCurrentIndex] = useState(exampleData.length);
-  // const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   // Adds a new task to tasksData.
   const addTask = (newTask: ITask) => {
@@ -36,8 +37,26 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setTasksData(updatedTasksData);
   };
 
+  // Edits an existing task in tasksData.
+  const editTask = (editTask: ITask) => {
+    // Checks for id.
+    if (editTask.id === undefined) {
+      return;
+    }
+
+    // console.log(`Editting task:`);
+    // console.log(editTask);
+
+    // Updates the task at the id of editTask.id.
+    const updatedTasksData = tasksData.map((task) => {
+      return task.id === editTask.id ? { ...task, ...editTask } : task;
+    });
+
+    setTasksData(updatedTasksData);
+  };
+
   return (
-    <DataContext.Provider value={{ tasksData, addTask }}>
+    <DataContext.Provider value={{ tasksData, addTask, editTask }}>
       {children}
     </DataContext.Provider>
   );
