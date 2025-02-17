@@ -7,6 +7,7 @@ The clever origin of the name is that it's just the word "Management" without th
 ## Features
 
 - Task organization in a table display.
+- Add, edit, delete tasks.
 
 ## Run Locally
 
@@ -39,6 +40,10 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 0.2.0
+
+- Tasks can be added, edited, and deleted.
 
 ### 0.1.0
 
