@@ -15,8 +15,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Stores length of tasks to use as id.
   // Currently using exampleData
+  // INDEX STARTS AT 1
   const [currentIndex, setCurrentIndex] = useState(exampleData.length);
-  // const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   // Adds a new task to tasksData.
   const addTask = (newTask: ITask) => {
