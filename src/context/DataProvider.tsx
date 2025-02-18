@@ -305,6 +305,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         deleteTask,
         sortedOrFilteredSettings,
         changeColumnSorted,
+        changeFilterType,
+        updateFilterText,
       }}
     >
       {children}
