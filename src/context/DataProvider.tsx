@@ -30,6 +30,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       sortedAscending: false,
       columnSorted: "",
       filtered: false,
+      filterType: "title",
       filteredText: "",
     });
 
