@@ -3,7 +3,7 @@ import { DataContext } from "./DataContext";
 import { exampleData } from "../exampleData/data";
 
 // Types
-import { ITask } from "../types/types";
+import { ITask, ISortedFilteredSettings } from "../types/types";
 
 interface IDataProviderProps {
   children: React.ReactNode;
@@ -12,6 +12,9 @@ interface IDataProviderProps {
 export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // const [tasksData, setTasksData] = useState<ITask[]>([]);
   const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
+  const [sortedFilteredData, setSortedFilteredData] = useState<ITask[] | []>(
+    []
+  );
 
   // Stores length of tasks to use as id.
   // Currently using exampleData
