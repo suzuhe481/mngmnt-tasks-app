@@ -10,5 +10,6 @@ export interface ISortedFilteredSettings {
   sortedAscending: boolean;
   columnSorted: string;
   filtered: boolean;
+  filterType: string;
   filteredText: string;
 }
