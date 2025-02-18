@@ -113,26 +113,33 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     // Updates settings
     setSortedOrFilteredSettings(newSettings);
-    // New settings are passed to use for current sorting.
-    runSort(newSettings);
+
+    // New settings are passed to use for current sorting and textFiltering.
+    sortAndFilter(newSettings);
   };
 
-  // Sorts tasksData based on title column and direction.
-  const sortByTitle = (newSettings: ISortedFilteredSettings) => {
+  // Returns sorted tasksData based on title column and direction.
+  const sortByTitle = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
     const sortedAsc = newSettings.sortedAscending;
 
     // Sort function for array
-    const sortedByTitle = tasksData.sort((a, b) => {
+    const sortedByTitle = sortedAndFilteredTasks.sort((a, b) => {
       if (a.title < b.title) return sortedAsc ? -1 : 1;
       if (a.title > b.title) return sortedAsc ? 1 : -1;
       return 0;
     });
 
-    setSortedFilteredData(sortedByTitle);
+    return sortedByTitle;
   };
 
-  // Sorts tasksData based on priority column.
-  const sortByPriority = (newSettings: ISortedFilteredSettings) => {
+  // Returns sorted tasksData based on priority column.
+  const sortByPriority = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
     const sortedAsc = newSettings.sortedAscending;
 
     const priorityOrder: { [key: string]: number } = {
@@ -143,17 +150,20 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       urgent: 5,
     };
 
-    const sortedByPriority = tasksData.sort((a, b) => {
+    const sortedByPriority = sortedAndFilteredTasks.sort((a, b) => {
       return sortedAsc
         ? priorityOrder[a.priority] - priorityOrder[b.priority]
         : priorityOrder[b.priority] - priorityOrder[a.priority];
     });
 
-    setSortedFilteredData(sortedByPriority);
+    return sortedByPriority;
   };
 
-  // Sorts tasksData based on status column.
-  const sortByStatus = (newSettings: ISortedFilteredSettings) => {
+  // Returns sorted tasksData based on status column.
+  const sortByStatus = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
     const sortedAsc = newSettings.sortedAscending;
 
     const statusOrder: { [key: string]: number } = {
@@ -162,31 +172,127 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       completed: 3,
     };
 
-    const sortedByStatus = tasksData.sort((a, b) => {
+    const sortedByStatus = sortedAndFilteredTasks.sort((a, b) => {
       return sortedAsc
         ? statusOrder[a.status] - statusOrder[b.status]
         : statusOrder[b.status] - statusOrder[a.status];
     });
 
-    setSortedFilteredData(sortedByStatus);
+    return sortedByStatus;
   };
 
-  // Sorts tasksData based on sorting setting.
-  // Current newSettings are passed
-  const runSort = (newSettings: ISortedFilteredSettings) => {
+  // Returns sorted tasksData based on sorting setting.
+  // Current newSettings and tasks are passed as arguments.
+  const runSort = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
     const column = newSettings.columnSorted;
 
     switch (column) {
       case "title":
-        sortByTitle(newSettings);
-        break;
+        return (
+          sortByTitle(newSettings, sortedAndFilteredTasks) ||
+          sortedAndFilteredTasks
+        );
       case "priority":
-        sortByPriority(newSettings);
-        break;
+        return (
+          sortByPriority(newSettings, sortedAndFilteredTasks) ||
+          sortedAndFilteredTasks
+        );
       case "status":
-        sortByStatus(newSettings);
-        break;
+        return (
+          sortByStatus(newSettings, sortedAndFilteredTasks) ||
+          sortedAndFilteredTasks
+        );
     }
+
+    // Returns default array to avoid returning undefined
+    return sortedAndFilteredTasks;
+  };
+
+  // Changes the filter type.
+  const changeFilterType = (newFilterType: string) => {
+    // New settings.
+    // Updates only the filter type settings.
+    const newSettings = {
+      ...sortedOrFilteredSettings,
+      filterType: newFilterType,
+      filtered: true,
+    };
+
+    // Updates settings
+    setSortedOrFilteredSettings(newSettings);
+  };
+
+  // Updates the text string used for filtering.
+  const updateFilterText = (newText: string) => {
+    // New settings.
+    // Updates only the filter type settings.
+    const newSettings = {
+      ...sortedOrFilteredSettings,
+      filteredText: newText,
+      filtered: true,
+    };
+
+    // Updates settings
+    setSortedOrFilteredSettings(newSettings);
+
+    // Runs sort and filter based on new settings
+    sortAndFilter(newSettings);
+  };
+
+  // Filters tasks based on provided text.
+  // Current newSettings are passed
+  const runTextFilter = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
+    const filterText = newSettings.filteredText.toLowerCase();
+    const filterType = newSettings.filterType;
+
+    const filteredTasks = sortedAndFilteredTasks.filter((task) => {
+      const titleMatch = task.title.toLowerCase().includes(filterText);
+      const statusMatch = formatStatus(task.status)
+        .toLowerCase()
+        .includes(filterText);
+      const priorityMatch = formatPriority(task.priority)
+        .toLowerCase()
+        .includes(filterText);
+
+      // Return true if any of the conditions match
+      return filterType === "title"
+        ? titleMatch
+        : filterType === "status"
+        ? statusMatch
+        : filterType === "priority"
+        ? priorityMatch
+        : titleMatch;
+    });
+
+    // Empty array to avoid returning undefined
+    return filteredTasks || sortedAndFilteredTasks;
+  };
+
+  // Sorts and filters copy of tasks through runSort and runTextFilter
+  const sortAndFilter = (newSettings: ISortedFilteredSettings) => {
+    // Creates shallow copy of tasksData.
+    let sortedAndFilteredTasks: ITask[] = [...tasksData];
+
+    // Sorts if true
+    if (newSettings.sorted) {
+      sortedAndFilteredTasks = runSort(newSettings, sortedAndFilteredTasks);
+    }
+
+    // Filters if text isn't empty
+    if (newSettings.filteredText !== "") {
+      sortedAndFilteredTasks = runTextFilter(
+        newSettings,
+        sortedAndFilteredTasks
+      );
+    }
+
+    setSortedFilteredData(sortedAndFilteredTasks);
   };
 
   return (
