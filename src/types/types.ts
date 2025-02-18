@@ -4,3 +4,11 @@ export interface ITask {
   status: string;
   priority: string;
 }
+
+export interface ISortedFilteredSettings {
+  sorted: boolean;
+  sortedAscending: boolean;
+  columnSorted: string;
+  filtered: boolean;
+  filteredText: string;
+}
