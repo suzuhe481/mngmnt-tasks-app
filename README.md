@@ -8,6 +8,7 @@ The clever origin of the name is that it's just the word "Management" without th
 
 - Task organization in a table display.
 - Add, edit, delete tasks.
+- Sort and filter through tasks by column or text.
 
 ## Run Locally
 
@@ -40,6 +41,12 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 0.3.0
+
+- Tasks can be sorted through by column type in either ascending or descending.
+- Tasks can be filtered by text and by column type.
+- Sorting and filtering work in tandem.
 
 ### 0.2.0
 
