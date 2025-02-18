@@ -223,6 +223,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     // Updates settings
     setSortedOrFilteredSettings(newSettings);
+
+    // Runs sort and filter based on new settings
+    sortAndFilter(newSettings);
   };
 
   // Updates the text string used for filtering.
