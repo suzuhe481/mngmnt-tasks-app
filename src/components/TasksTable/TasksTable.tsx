@@ -15,13 +15,16 @@ export const TasksTable = () => {
 
   const { tasksData, sortedFilteredData, sortedOrFilteredSettings } = context;
 
-  const isSorted = sortedOrFilteredSettings.sorted;
+  // Detects if data has been sorted or filtered to determine
+  // which tasks to display.
+  const isSortedOrFiltered =
+    sortedOrFilteredSettings.sorted || sortedOrFilteredSettings.filtered;
 
   return (
     <div className="overflow-x-auto px-4">
       <table className="min-w-full table-auto">
         <Header />
-        {isSorted
+        {isSortedOrFiltered
           ? sortedFilteredData.map((task) => <TaskCard task={task} />)
           : tasksData.map((task) => <TaskCard task={task} />)}
       </table>
