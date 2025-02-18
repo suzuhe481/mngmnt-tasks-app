@@ -11,6 +11,8 @@ interface IDataContextProps {
   deleteTask: (deleteTask: ITask) => void;
   sortedOrFilteredSettings: ISortedFilteredSettings;
   changeColumnSorted: (newColumn: string) => void;
+  changeFilterType: (newFilterType: string) => void;
+  updateFilterText: (newText: string) => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(
