@@ -42,6 +42,10 @@ Start the server with either one of these three.
 
 ## Releases
 
+### 0.3.1
+
+- Bug fix when filtering functions. Correct tasks are displayed when switching filtered type without needing to type in the text input.
+
 ### 0.3.0
 
 - Tasks can be sorted through by column type in either ascending or descending.
