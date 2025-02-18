@@ -184,7 +184,17 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   };
 
   return (
-    <DataContext.Provider value={{ tasksData, addTask, editTask, deleteTask }}>
+    <DataContext.Provider
+      value={{
+        tasksData,
+        sortedFilteredData,
+        addTask,
+        editTask,
+        deleteTask,
+        sortedOrFilteredSettings,
+        changeColumnSorted,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );
