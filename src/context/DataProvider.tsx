@@ -111,6 +111,78 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     runSort(newSettings);
   };
 
+  // Sorts tasksData based on title column and direction.
+  const sortByTitle = (newSettings: ISortedFilteredSettings) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    // Sort function for array
+    const sortedByTitle = tasksData.sort((a, b) => {
+      if (a.title < b.title) return sortedAsc ? -1 : 1;
+      if (a.title > b.title) return sortedAsc ? 1 : -1;
+      return 0;
+    });
+
+    setSortedFilteredData(sortedByTitle);
+  };
+
+  // Sorts tasksData based on priority column.
+  const sortByPriority = (newSettings: ISortedFilteredSettings) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    const priorityOrder: { [key: string]: number } = {
+      none: 1,
+      low: 2,
+      medium: 3,
+      high: 4,
+      urgent: 5,
+    };
+
+    const sortedByPriority = tasksData.sort((a, b) => {
+      return sortedAsc
+        ? priorityOrder[a.priority] - priorityOrder[b.priority]
+        : priorityOrder[b.priority] - priorityOrder[a.priority];
+    });
+
+    setSortedFilteredData(sortedByPriority);
+  };
+
+  // Sorts tasksData based on status column.
+  const sortByStatus = (newSettings: ISortedFilteredSettings) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    const statusOrder: { [key: string]: number } = {
+      not_started: 1,
+      in_progress: 2,
+      completed: 3,
+    };
+
+    const sortedByStatus = tasksData.sort((a, b) => {
+      return sortedAsc
+        ? statusOrder[a.status] - statusOrder[b.status]
+        : statusOrder[b.status] - statusOrder[a.status];
+    });
+
+    setSortedFilteredData(sortedByStatus);
+  };
+
+  // Sorts tasksData based on sorting setting.
+  // Current newSettings are passed
+  const runSort = (newSettings: ISortedFilteredSettings) => {
+    const column = newSettings.columnSorted;
+
+    switch (column) {
+      case "title":
+        sortByTitle(newSettings);
+        break;
+      case "priority":
+        sortByPriority(newSettings);
+        break;
+      case "status":
+        sortByStatus(newSettings);
+        break;
+    }
+  };
+
   return (
     <DataContext.Provider value={{ tasksData, addTask, editTask, deleteTask }}>
       {children}
