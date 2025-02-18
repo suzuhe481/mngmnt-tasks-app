@@ -87,6 +87,30 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setTasksData(updatedTasksData);
   };
 
+  // Updates sorting/filtering settings when a column is clicked.
+  const changeColumnSorted = (newColumn: string) => {
+    // Checks if the clicked column the same or a new column.
+    // Used to adjust the defaul sort to ascending for a new column.
+    const columnSwitched =
+      newColumn === sortedOrFilteredSettings.columnSorted ? false : true;
+
+    // New settings.
+    // Updates only the sort settings.
+    const newSettings = {
+      ...sortedOrFilteredSettings,
+      sorted: true,
+      sortedAscending: columnSwitched
+        ? true
+        : !sortedOrFilteredSettings.sortedAscending,
+      columnSorted: newColumn,
+    };
+
+    // Updates settings
+    setSortedOrFilteredSettings(newSettings);
+    // New settings are passed to use for current sorting.
+    runSort(newSettings);
+  };
+
   return (
     <DataContext.Provider value={{ tasksData, addTask, editTask, deleteTask }}>
       {children}
