@@ -22,6 +22,17 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   const [currentIndex, setCurrentIndex] = useState(exampleData.length);
   // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
+  // Stores settings for how to sort or filter through the data.
+  // Can only sorted through 1 column at a time
+  const [sortedOrFilteredSettings, setSortedOrFilteredSettings] =
+    useState<ISortedFilteredSettings>({
+      sorted: false,
+      sortedAscending: false,
+      columnSorted: "",
+      filtered: false,
+      filteredText: "",
+    });
+
   // Adds a new task to tasksData.
   const addTask = (newTask: ITask) => {
     // Adding id to task
