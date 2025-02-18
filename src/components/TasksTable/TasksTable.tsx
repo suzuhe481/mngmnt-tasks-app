@@ -13,15 +13,17 @@ export const TasksTable = () => {
     return;
   }
 
-  const { tasksData } = context;
+  const { tasksData, sortedFilteredData, sortedOrFilteredSettings } = context;
+
+  const isSorted = sortedOrFilteredSettings.sorted;
 
   return (
     <div className="overflow-x-auto px-4">
       <table className="min-w-full table-auto">
         <Header />
-        {tasksData.map((task) => (
-          <TaskCard task={task} />
-        ))}
+        {isSorted
+          ? sortedFilteredData.map((task) => <TaskCard task={task} />)
+          : tasksData.map((task) => <TaskCard task={task} />)}
       </table>
     </div>
   );
