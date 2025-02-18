@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { DataContext } from "./DataContext";
 import { exampleData } from "../exampleData/data";
 
+import {
+  formatStatus,
+  formatPriority,
+} from "../components/TasksTable/components/functions/formatData";
+
 // Types
 import { ITask, ISortedFilteredSettings } from "../types/types";
 
