@@ -9,6 +9,7 @@ The clever origin of the name is that it's just the word "Management" without th
 - Task organization in a table display.
 - Add, edit, delete tasks.
 - Sort and filter through tasks by column or text.
+- Paginate through tasks to easily find what you're looking for.
 
 ## Run Locally
 
@@ -41,6 +42,12 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 0.4.0
+
+- Pagination for tasks.
+- Users can change page number and page size.
+- Some hover styles changes on buttons.
 
 ### 0.3.1
 
