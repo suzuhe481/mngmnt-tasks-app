@@ -114,13 +114,13 @@ export const Actions = () => {
       <div className="flex flex-row gap-2">
         <button
           onClick={openAddTaskModal}
-          className="bg-blue-400 h-12 rounded-sm px-4 font-bold text-white cursor-pointer"
+          className="bg-blue-500 h-12 rounded-sm px-4 hover:bg-blue-600 font-bold text-white cursor-pointer"
         >
           New Task
         </button>
         <button
           ref={ActionIconRef}
-          className="bg-slate-100 border-2 border-slate-300 rounded-sm p-1 w-12 h-12 cursor-pointer"
+          className="bg-slate-100 border-2 border-slate-300 hover:bg-slate-400 rounded-sm p-1 w-12 h-12 cursor-pointer"
         >
           <FontAwesomeIcon
             icon={faEllipsis}
