@@ -326,6 +326,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   const changePageSize = (newSize: number) => {
     setPageSize(newSize);
 
+    // Stops when tasks are empty.
+    // Prevents setting a 0 value for newCurrentPage.
+    if (tasksData.length === 0) {
+      return;
+    }
+
     const totalTasks = tasksData.length;
     const totalPages = Math.ceil(totalTasks / newSize);
 
