@@ -302,7 +302,63 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       );
     }
 
-    setSortedFilteredData(sortedAndFilteredTasks);
+    const paginatedSortedFiltered = paginateTasks(
+      sortedAndFilteredTasks,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedSortedFiltered);
+  };
+
+  // Changes page size.
+  // Adjusts current page if user is on a higher page number than is available.
+  // Paginates data with new values.
+  const changePageSize = (newSize: number) => {
+    setPageSize(newSize);
+
+    const totalTasks = tasksData.length;
+    const totalPages = Math.ceil(totalTasks / newSize);
+
+    const newCurrentPage = currentPage > totalPages ? totalPages : currentPage;
+    setCurrentPage(newCurrentPage);
+
+    const paginatedTasks = paginateTasks(tasksData, newCurrentPage, newSize);
+
+    setDisplayedData(paginatedTasks);
+  };
+
+  // Changes current page.
+  // Adjusts page to not go under 1 or greater than the totalPages.
+  // Paginates data with new values.
+  const changeCurrentPage = (newPage: number) => {
+    // Prevents running when loading.
+    if (paginationLoading) {
+      return;
+    }
+    const totalTasks = tasksData.length;
+    const totalPages = Math.ceil(totalTasks / pageSize);
+    let newCurrentPage = newPage;
+
+    // Calculates if newPage is within bounds of totalPages.
+    if (newPage < 1) {
+      newCurrentPage = 1;
+    } else if (newPage > totalPages) {
+      newCurrentPage = totalPages;
+    }
+    setCurrentPage(newCurrentPage);
+
+    const paginatedTasks = paginateTasks(tasksData, newCurrentPage, pageSize);
+
+    setDisplayedData(paginatedTasks);
+    setPaginationLoading(false);
+  };
+
+  // Returns paginated tasks.
+  const paginateTasks = (tasks: ITask[], newPage: number, newSize: number) => {
+    const tasksSkipped = (newPage - 1) * newSize;
+
+    return tasks.slice(tasksSkipped, tasksSkipped + newSize);
   };
 
   return (
