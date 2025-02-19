@@ -45,6 +45,11 @@ Start the server with either one of these three.
 
 ## Releases
 
+### 0.5.1
+
+- Bug fix to pagination on imported tasks.
+- Bug fix to prevent setting currentPage to 0 when tasksData is empty.
+
 ### 0.5.0
 
 - Data now persists between reloads and browser closings.
