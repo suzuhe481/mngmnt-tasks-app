@@ -67,9 +67,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     newTask.id = currentIndex;
     setCurrentIndex((prevIndex) => prevIndex + 1);
 
-    // console.log(`Adding new task:`);
-    // console.log(newTask);
-
     // Creates shallow copy of tasksData.
     const updatedTasksData: ITask[] = [...tasksData];
 
@@ -87,9 +84,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return;
     }
 
-    // console.log(`Editting task:`);
-    // console.log(editTask);
-
     // Updates the task at the id of editTask.id.
     const updatedTasksData = tasksData.map((task) => {
       return task.id === editTask.id ? { ...task, ...editTask } : task;
@@ -105,9 +99,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     if (deleteTask.id === undefined) {
       return;
     }
-
-    // console.log(`Deleting task:`);
-    // console.log(deleteTask);
 
     // Updates the task at the id of editTask.id.
     const updatedTasksData = tasksData.filter((task) => {
