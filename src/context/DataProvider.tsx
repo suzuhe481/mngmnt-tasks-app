@@ -365,7 +365,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     <DataContext.Provider
       value={{
         tasksData,
-        sortedFilteredData,
+        displayedData,
         addTask,
         editTask,
         deleteTask,
@@ -373,6 +373,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         changeColumnSorted,
         changeFilterType,
         updateFilterText,
+        changePageSize,
+        changeCurrentPage,
+        currentPage,
+        pageSize,
+        paginationLoading,
+        setPaginationLoading,
       }}
     >
       {children}
