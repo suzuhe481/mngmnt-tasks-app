@@ -389,9 +389,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
       localStorage.setItem("tasksData", JSON.stringify(tasksData));
-      setDisplayedData(tasksData);
+
+      // Paginate using current settings before storing as displayed.
+      const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
+      setDisplayedData(paginatedTasks);
     }
-  }, [tasksData]); // Only runs when tasksData changes
+  }, [tasksData, currentPage, pageSize]);
 
   return (
     <DataContext.Provider
