@@ -379,6 +379,10 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Imports example data
   const importExampleData = () => {
     setTasksData(exampleData);
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
+    setDisplayedData(paginatedTasks);
   };
 
   // useEffect to sync tasksData with localStorage
