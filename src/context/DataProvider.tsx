@@ -67,9 +67,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     newTask.id = currentIndex;
     setCurrentIndex((prevIndex) => prevIndex + 1);
 
-    // console.log(`Adding new task:`);
-    // console.log(newTask);
-
     // Creates shallow copy of tasksData.
     const updatedTasksData: ITask[] = [...tasksData];
 
@@ -87,9 +84,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return;
     }
 
-    // console.log(`Editting task:`);
-    // console.log(editTask);
-
     // Updates the task at the id of editTask.id.
     const updatedTasksData = tasksData.map((task) => {
       return task.id === editTask.id ? { ...task, ...editTask } : task;
@@ -105,9 +99,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     if (deleteTask.id === undefined) {
       return;
     }
-
-    // console.log(`Deleting task:`);
-    // console.log(deleteTask);
 
     // Updates the task at the id of editTask.id.
     const updatedTasksData = tasksData.filter((task) => {
@@ -335,6 +326,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   const changePageSize = (newSize: number) => {
     setPageSize(newSize);
 
+    // Stops when tasks are empty.
+    // Prevents setting a 0 value for newCurrentPage.
+    if (tasksData.length === 0) {
+      return;
+    }
+
     const totalTasks = tasksData.length;
     const totalPages = Math.ceil(totalTasks / newSize);
 
@@ -382,15 +379,22 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Imports example data
   const importExampleData = () => {
     setTasksData(exampleData);
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
+    setDisplayedData(paginatedTasks);
   };
 
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
       localStorage.setItem("tasksData", JSON.stringify(tasksData));
-      setDisplayedData(tasksData);
+
+      // Paginate using current settings before storing as displayed.
+      const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
+      setDisplayedData(paginatedTasks);
     }
-  }, [tasksData]); // Only runs when tasksData changes
+  }, [tasksData, currentPage, pageSize]);
 
   return (
     <DataContext.Provider
