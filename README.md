@@ -10,6 +10,8 @@ The clever origin of the name is that it's just the word "Management" without th
 - Add, edit, delete tasks.
 - Sort and filter through tasks by column or text.
 - Paginate through tasks to easily find what you're looking for.
+- Refreshed the page or closed your browser? Your data is stored locally and stays there until you return.
+- Load example data to see what it looks like to be really busy.
 
 ## Run Locally
 
@@ -42,6 +44,11 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 0.5.0
+
+- Data now persists between reloads and browser closings.
+- Can import example data to populate the table.
 
 ### 0.4.0
 

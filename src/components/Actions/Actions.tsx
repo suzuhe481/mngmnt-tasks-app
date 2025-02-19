@@ -120,13 +120,10 @@ export const Actions = () => {
         </button>
         <button
           ref={ActionIconRef}
+          onClick={() => setActionModalOpen(!actionModalOpen)}
           className="bg-slate-100 border-2 border-slate-300 hover:bg-slate-400 rounded-sm p-1 w-12 h-12 cursor-pointer"
         >
-          <FontAwesomeIcon
-            icon={faEllipsis}
-            onClick={() => setActionModalOpen(!actionModalOpen)}
-            className="text-slate-600"
-          />
+          <FontAwesomeIcon icon={faEllipsis} className="text-slate-600" />
         </button>
         {actionModalOpen ? <ActionModal ref={ActionModalRef} /> : null}
       </div>
