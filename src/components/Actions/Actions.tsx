@@ -1,6 +1,7 @@
-import { useState, use } from "react";
+import { useState, use, useRef, useEffect } from "react";
 
 import AddTaskModal from "../../UI/FormModals/AddTaskModal";
+import ActionModal from "../../UI/SettingsModals/ActionModal";
 
 import { ITask } from "../../types/types";
 
@@ -12,15 +13,11 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 export const Actions = () => {
   const [addTaskModalOpen, setAddTaskModalOpen] = useState<boolean>(false);
 
-  const context = use(DataContext);
+  const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
 
-  // Checks for undefined context.
-  if (!context) {
-    return;
-  }
-
-  // Using context
-  const { addTask } = context;
+  // Refs for Action Icon and Modal
+  const ActionModalRef = useRef<HTMLDivElement>(null);
+  const ActionIconRef = useRef<HTMLButtonElement>(null);
 
   // Title for Add Task modal.
   const AddTaskTitle = "Add Task";
@@ -40,8 +37,55 @@ export const Actions = () => {
     addTask(newTask);
   };
 
+  // Handles when clicking on screen to close Filter Modal.
+  function handleClickOutsideMenu(event: MouseEvent) {
+    const target = event.target as Node;
+
+    // If icon is clicked while modal is open,
+    // Modal remains open.
+    // Reason: Without this, modal will flash when clicking the icon.
+    if (
+      actionModalOpen &&
+      ActionIconRef.current &&
+      ActionIconRef.current.contains(target)
+    ) {
+      // Does nothing
+    }
+    // If anywhere else on the page is clicked that isn't inside the menu, close the menu.
+    else if (
+      actionModalOpen &&
+      ActionModalRef.current &&
+      !ActionModalRef.current.contains(target)
+    ) {
+      setActionModalOpen(false);
+    }
+  }
+
+  // Adds/removes event listener for closing the FilterModal on outside button click.
+  useEffect(() => {
+    const controller = new AbortController();
+
+    document.addEventListener("mousedown", handleClickOutsideMenu, {
+      signal: controller.signal,
+    });
+
+    return () => {
+      controller.abort();
+    };
+  });
+
+  const context = use(DataContext);
+
+  // Checks for undefined context.
+  if (!context) {
+    return;
+  }
+
+  // Using context
+  const { addTask, changePageSize, pageSize } = context;
+
   return (
-    <div className="flex flex-row justify-end items-center gap-2 py-2 mx-4">
+    <div className="relative flex flex-row justify-between items-center gap-2 py-2 mx-4">
       {addTaskModalOpen ? (
         <AddTaskModal
           title={AddTaskTitle}
@@ -49,15 +93,43 @@ export const Actions = () => {
           cancelAction={closeAddTaskModal}
         />
       ) : null}
-      <button
-        onClick={openAddTaskModal}
-        className="bg-blue-400 h-12 rounded-sm px-4 font-bold text-white cursor-pointer"
-      >
-        New Task
-      </button>
-      <button className="bg-slate-100 border-2 border-slate-300 rounded-sm p-1 w-12 h-12 cursor-pointer">
-        <FontAwesomeIcon icon={faEllipsis} className="text-slate-600" />
-      </button>
+      <div>
+        <label htmlFor="size" className="mb-1">
+          Page Size:
+        </label>
+        <select
+          name="size"
+          id="size"
+          required
+          value={pageSize}
+          onChange={(event) => changePageSize(Number(event.target.value))}
+          className="border-2 border-slate-400 py-2 focus:outline-none focus:border-[#75C1FF] focus:shadow-[0_0_0_2px_#B3E0FF]"
+        >
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+      <div className="flex flex-row gap-2">
+        <button
+          onClick={openAddTaskModal}
+          className="bg-blue-400 h-12 rounded-sm px-4 font-bold text-white cursor-pointer"
+        >
+          New Task
+        </button>
+        <button
+          ref={ActionIconRef}
+          className="bg-slate-100 border-2 border-slate-300 rounded-sm p-1 w-12 h-12 cursor-pointer"
+        >
+          <FontAwesomeIcon
+            icon={faEllipsis}
+            onClick={() => setActionModalOpen(!actionModalOpen)}
+            className="text-slate-600"
+          />
+        </button>
+        {actionModalOpen ? <ActionModal ref={ActionModalRef} /> : null}
+      </div>
     </div>
   );
 };
