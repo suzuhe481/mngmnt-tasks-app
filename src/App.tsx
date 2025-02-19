@@ -2,6 +2,7 @@ import { Header } from "./components/Header/Header";
 import { Actions } from "./components/Actions/Actions";
 import { Search } from "./components/Search/Search";
 import { TasksTable } from "./components/TasksTable/TasksTable";
+import { Pagination } from "./components/PaginationControls/Pagination";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Actions />
       <Search />
       <TasksTable />
+      <Pagination />
     </div>
   );
 }

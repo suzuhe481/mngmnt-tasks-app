@@ -4,8 +4,8 @@ import { createContext } from "react";
 import { ITask, ISortedFilteredSettings } from "../types/types";
 
 interface IDataContextProps {
-  tasksData: ITask[];
-  sortedFilteredData: ITask[] | [];
+  tasksData: ITask[] | [];
+  displayedData: ITask[] | [];
   addTask: (newTask: ITask) => void;
   editTask: (editedTask: ITask) => void;
   deleteTask: (deleteTask: ITask) => void;
@@ -13,6 +13,12 @@ interface IDataContextProps {
   changeColumnSorted: (newColumn: string) => void;
   changeFilterType: (newFilterType: string) => void;
   updateFilterText: (newText: string) => void;
+  changePageSize: (newSize: number) => void;
+  changeCurrentPage: (newPage: number) => void;
+  currentPage: number;
+  pageSize: number;
+  paginationLoading: boolean;
+  setPaginationLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(

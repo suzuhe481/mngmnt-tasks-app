@@ -97,7 +97,7 @@ export const Search = () => {
         <FontAwesomeIcon
           icon={faFilter}
           onClick={() => setFilterModalOpen(!filterModalOpen)}
-          className="text-3xl text-slate-700 cursor-pointer"
+          className="text-3xl text-slate-400 hover:text-slate-700 cursor-pointer"
         />
       </button>
       {filterModalOpen ? <FilterModal ref={FilterModalRef} /> : null}
