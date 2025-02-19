@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
 import { exampleData } from "../exampleData/data";
 
@@ -15,9 +15,24 @@ interface IDataProviderProps {
 }
 
 export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
-  // const [tasksData, setTasksData] = useState<ITask[]>([]);
+  // Gets and sets tasksData from localStorage
+  const [tasksData, setTasksData] = useState<ITask[] | []>(() => {
+    // return sessionStorage.getItem("lastUrlVisited") ?? "/";
+    const storedTasks = localStorage.getItem("tasksData");
+
+    // Get tasks from localStorage
+    if (storedTasks) {
+      return JSON.parse(storedTasks);
+    }
+    // If not data, create empty ITask[]
+    else {
+      localStorage.setItem("tasksData", JSON.stringify([]));
+      return [];
+    }
+  });
+
   // Stores all of the original tasks.
-  const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
+  // const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
 
   // Stores tasks to be displayed.
   // Can be filtered, sorted, and paginated.
@@ -62,6 +77,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     updatedTasksData.push(newTask);
 
     setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
 
   // Edits an existing task in tasksData.
@@ -80,6 +96,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     });
 
     setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
 
   // Edits an existing task in tasksData.
@@ -98,6 +115,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     });
 
     setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
 
   // Updates sorting/filtering settings when a column is clicked.
@@ -361,6 +379,14 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     return tasks.slice(tasksSkipped, tasksSkipped + newSize);
   };
 
+  // useEffect to sync tasksData with localStorage
+  useEffect(() => {
+    if (tasksData && tasksData.length > 0) {
+      localStorage.setItem("tasksData", JSON.stringify(tasksData));
+      setDisplayedData(tasksData);
+    }
+  }, [tasksData]); // Only runs when tasksData changes
+
   return (
     <DataContext.Provider
       value={{
@@ -379,6 +405,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         pageSize,
         paginationLoading,
         setPaginationLoading,
+        importExampleData,
       }}
     >
       {children}
