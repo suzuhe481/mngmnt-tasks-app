@@ -16,10 +16,12 @@ interface IDataProviderProps {
 
 export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // const [tasksData, setTasksData] = useState<ITask[]>([]);
+  // Stores all of the original tasks.
   const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
-  const [sortedFilteredData, setSortedFilteredData] = useState<ITask[] | []>(
-    []
-  );
+
+  // Stores tasks to be displayed.
+  // Can be filtered, sorted, and paginated.
+  const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
   // Stores length of tasks to use as id.
   // Currently using exampleData
