@@ -29,6 +29,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   const [currentIndex, setCurrentIndex] = useState(exampleData.length);
   // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
+  // Pagination variables
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [paginationLoading, setPaginationLoading] = useState<boolean>(false);
+
   // Stores settings for how to sort or filter through the data.
   // Can only sorted through 1 column at a time
   const [sortedOrFilteredSettings, setSortedOrFilteredSettings] =
