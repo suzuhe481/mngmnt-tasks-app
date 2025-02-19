@@ -379,6 +379,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     return tasks.slice(tasksSkipped, tasksSkipped + newSize);
   };
 
+  // Imports example data
+  const importExampleData = () => {
+    setTasksData(exampleData);
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
