@@ -19,6 +19,7 @@ interface IDataContextProps {
   pageSize: number;
   paginationLoading: boolean;
   setPaginationLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  importExampleData: () => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(

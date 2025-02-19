@@ -27,7 +27,9 @@ export const Pagination = () => {
 
   // Creates an array of pages starting at 1
   // Used to create the <option> tags for page selection.
-  const pagesArray = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // When array is empty (new user), have a single page.
+  const pagesArray =
+    totalPages > 0 ? Array.from({ length: totalPages }, (_, i) => i + 1) : [1];
 
   const handlePageChange = (newPage: number) => {
     setPaginationLoading(true);
