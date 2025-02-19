@@ -1,4 +1,4 @@
-import { RefObject, use } from "react";
+import { RefObject, use, useState } from "react";
 import { DataContext } from "../../context/DataContext";
 
 interface IFilterModalProps {
@@ -6,6 +6,8 @@ interface IFilterModalProps {
 }
 
 const ActionModal = ({ ref }: IFilterModalProps) => {
+  const [importModalOpen, setImportModalOpen] = useState<boolean>(false);
+
   const context = use(DataContext);
 
   // Checks for undefined context.
@@ -14,7 +16,28 @@ const ActionModal = ({ ref }: IFilterModalProps) => {
   }
 
   // Using context
-  // const { } = context;
+  const { importExampleData } = context;
+
+  // Title and Description for Import Data modal.
+  const ImportDataTitle = "Import Example Data?";
+  const ImportDataDesc =
+    "Are you sure? This will PERMANENTLY overwrite your current tasks.";
+
+  // Opens Import Data Modal
+  const openImportModalModal = () => {
+    setImportModalOpen(true);
+  };
+
+  // Closes Import Data Modal
+  const closeImportModalModal = () => {
+    setImportModalOpen(false);
+  };
+
+  // Confirms adding task
+  const confirmImport = () => {
+    importExampleData();
+    setImportModalOpen(false);
+  };
 
   return (
     <div
