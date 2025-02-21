@@ -612,6 +612,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         paginationLoading,
         setPaginationLoading,
         importExampleData,
+        addNewColumn,
+        deleteColumn,
+        customFields,
       }}
     >
       {children}
