@@ -36,8 +36,36 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     }
   });
 
-  // Stores all of the original tasks.
-  // const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
+  // Gets and sets schema for customFields in localStorage
+  const [customFields, setCustomFields] = useState<ICustomField[]>(() => {
+    const storedCustomFields = localStorage.getItem("customFields");
+
+    // Get tasks from localStorage
+    if (storedCustomFields) {
+      return JSON.parse(storedCustomFields);
+    }
+    // If no data, create empty ICustomField[]
+    else {
+      localStorage.setItem("customFields", JSON.stringify([]));
+      return [];
+    }
+  });
+
+  // Stores some settings in localStorage
+  // Sotres currentIndex
+  const [settings, setSettings] = useState(() => {
+    const storedSettings = localStorage.getItem("settings");
+
+    // Get settings from localStorage
+    if (storedSettings) {
+      return JSON.parse(storedSettings);
+    }
+    // No data, create default settings
+    else {
+      localStorage.setItem("settings", JSON.stringify({ currentIndex: 1 }));
+      return { currentIndex: 1 };
+    }
+  });
 
   // Stores tasks to be displayed.
   // Can be filtered, sorted, and paginated.
