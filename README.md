@@ -13,6 +13,7 @@ The clever origin of the name is that it's just the word "Management" without th
 - Refreshed the page or closed your browser? Your data is stored locally and stays there until you return.
 - Load example data to see what it looks like to be really busy.
 - Create your own custom columns. Add and remove columns and they can be text, numbers, or a checkbox.
+- Subtle animations.
 
 ## Run Locally
 
@@ -45,6 +46,10 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 1.1.0
+
+- Added subtle animations and transitions to make things feel sleeker.
 
 ### 1.0.0
 
