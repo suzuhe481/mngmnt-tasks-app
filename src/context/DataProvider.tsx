@@ -94,9 +94,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Adds a new task to tasksData.
   const addTask = (newTask: ITask) => {
-    // Adding id to task
-    newTask.id = currentIndex;
-    setCurrentIndex((prevIndex) => prevIndex + 1);
+    // Adding id to task, increment id, save to state and localstorage
+    newTask.id = settings.currentIndex;
+    const newSettings = settings;
+    newSettings.currentIndex++;
+    setSettings(newSettings);
+    localStorage.setItem("settings", JSON.stringify(newSettings));
 
     // Creates shallow copy of tasksData.
     const updatedTasksData: ITask[] = [...tasksData];
@@ -104,6 +107,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Adds task
     updatedTasksData.push(newTask);
 
+    // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
