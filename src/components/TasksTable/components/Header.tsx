@@ -15,7 +15,8 @@ export const Header = () => {
   }
 
   // Using context
-  const { sortedOrFilteredSettings, changeColumnSorted } = context;
+  const { sortedOrFilteredSettings, changeColumnSorted, customFields } =
+    context;
 
   const sorted = sortedOrFilteredSettings.sorted;
   const caretDirectionUp = sortedOrFilteredSettings.sortedAscending;
@@ -103,6 +104,28 @@ export const Header = () => {
             ) : null}
           </div>
         </th>
+        {customFields.map((field) => {
+          return (
+            <th
+              onClick={() => handleColumnClick(field.title)}
+              className={` ${
+                columnSorted === field.title ? activeColumnStyles : ""
+              } p-2 border-2 border-slate-300 min-w-36 text-left text-slate-700 cursor-pointer hover:bg-slate-500 hover:text-white`}
+            >
+              <div className="flex flex-row justify-between items-center">
+                <div>{field.title}</div>
+                {sorted && columnSorted === field.title ? (
+                  <FontAwesomeIcon
+                    icon={faCaretUp}
+                    className={`opacity-100 ${
+                      caretDirectionUp ? "" : "rotate-180"
+                    }`}
+                  />
+                ) : null}
+              </div>
+            </th>
+          );
+        })}
       </tr>
     </thead>
   );
