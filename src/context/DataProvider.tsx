@@ -232,6 +232,71 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     return sortedByStatus;
   };
 
+  // CustomField
+  // Sorts text and boolean
+  // Returns sorted tasksData based on text and customField.
+  const sortByCustom = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    // Sort function for array
+    const sortedByTitle = sortedAndFilteredTasks.sort((a, b) => {
+      // Gets the fields to compare
+      const aCustomField = a.customFields?.[newSettings.columnSorted].value;
+      const bCustomField = b.customFields?.[newSettings.columnSorted].value;
+
+      // If both fields are undefined, return 0. Don't change order.
+      if (aCustomField === undefined && bCustomField === undefined) {
+        return 0;
+      }
+      // If only 1 is undefined, sort
+      if (aCustomField === undefined) return sortedAsc ? -1 : 1;
+      if (bCustomField === undefined) return sortedAsc ? 1 : -1;
+
+      // Normal sort between 2 defined values
+      if (aCustomField < bCustomField) return sortedAsc ? -1 : 1;
+      if (aCustomField > bCustomField) return sortedAsc ? 1 : -1;
+      return 0;
+    });
+
+    return sortedByTitle;
+  };
+
+  // CustomField
+  // Returns sorted taskData based on number and customField.
+  const sortByNumber = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    const sortedByNumber = sortedAndFilteredTasks.sort((a, b) => {
+      const aCustomField = a.customFields?.[newSettings.columnSorted]?.value;
+      const bCustomField = b.customFields?.[newSettings.columnSorted]?.value;
+
+      // If both fields are undefined, return 0. Don't change order.
+      if (aCustomField === undefined && bCustomField === undefined) {
+        return 0;
+      }
+      // If only 1 is undefined, sort
+      if (aCustomField === undefined) return sortedAsc ? -1 : 1;
+      if (bCustomField === undefined) return sortedAsc ? 1 : -1;
+
+      // Parse numbers
+      const aParsed = parseFloat(aCustomField as string);
+      const bParsed = parseFloat(bCustomField as string);
+
+      // Normal sort between 2 defined values
+      if (aParsed < bParsed) return sortedAsc ? -1 : 1;
+      if (aParsed > bParsed) return sortedAsc ? 1 : -1;
+      return 0;
+    });
+
+    return sortedByNumber;
+  };
+
   // Returns sorted tasksData based on sorting setting.
   // Current newSettings and tasks are passed as arguments.
   const runSort = (
