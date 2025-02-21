@@ -20,16 +20,16 @@ interface IDataProviderProps {
 }
 
 export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
+  // Stores all unmodified original tasks.
   // Gets and sets tasksData from localStorage
   const [tasksData, setTasksData] = useState<ITask[] | []>(() => {
-    // return sessionStorage.getItem("lastUrlVisited") ?? "/";
     const storedTasks = localStorage.getItem("tasksData");
 
     // Get tasks from localStorage
     if (storedTasks) {
       return JSON.parse(storedTasks);
     }
-    // If not data, create empty ITask[]
+    // If no data, create empty ITask[]
     else {
       localStorage.setItem("tasksData", JSON.stringify([]));
       return [];
@@ -43,10 +43,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
-  // Stores length of tasks to use as id.
-  // Currently using exampleData
+  // Stores id to be used as new tasks are added.
   // INDEX STARTS AT 1
-  const [currentIndex, setCurrentIndex] = useState(exampleData.length);
   // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   // Pagination variables
