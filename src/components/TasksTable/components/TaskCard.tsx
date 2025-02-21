@@ -33,7 +33,7 @@ export const TaskCard = ({ task }: ITaskCard) => {
   }
 
   // Using context
-  const { editTask, deleteTask } = context;
+  const { editTask, deleteTask, customFields } = context;
 
   const title = task.title;
   const status = formatStatus(task.status);
@@ -120,6 +120,24 @@ export const TaskCard = ({ task }: ITaskCard) => {
       <td className="p-2 border-2 border-gray-300 text-left">{title}</td>
       <td className="p-2 border-2 border-gray-300 text-left">{status}</td>
       <td className="p-2 border-2 border-gray-300 text-left">{priority}</td>
+      {customFields.map((field) => {
+        if (task.customFields === undefined) return;
+
+        const customFieldData = task.customFields[field.title];
+
+        if (!customFieldData) return null;
+
+        const valueToDisplay =
+          typeof customFieldData.value === "boolean"
+            ? customFieldData.value.toString()
+            : customFieldData.value;
+
+        return (
+          <td className="p-2 border-2 border-gray-300 text-left">
+            {valueToDisplay}
+          </td>
+        );
+      })}
     </tr>
   );
 };

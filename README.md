@@ -12,6 +12,7 @@ The clever origin of the name is that it's just the word "Management" without th
 - Paginate through tasks to easily find what you're looking for.
 - Refreshed the page or closed your browser? Your data is stored locally and stays there until you return.
 - Load example data to see what it looks like to be really busy.
+- Create your own custom columns. Add and remove columns and they can be text, numbers, or a checkbox.
 
 ## Run Locally
 
@@ -44,6 +45,11 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 1.0.0
+
+- Added the ability for users to add/remove their own custom columns.
+- Settings and custom column data stored in localStorage for persistance.
 
 ### 0.5.1
 

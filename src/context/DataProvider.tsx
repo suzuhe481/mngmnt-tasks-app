@@ -8,40 +8,71 @@ import {
 } from "../components/TasksTable/components/functions/formatData";
 
 // Types
-import { ITask, ISortedFilteredSettings } from "../types/types";
+import {
+  ITask,
+  ISortedFilteredSettings,
+  ICustomField,
+  ICustomData,
+} from "../types/types";
 
 interface IDataProviderProps {
   children: React.ReactNode;
 }
 
 export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
+  // Stores all unmodified original tasks.
   // Gets and sets tasksData from localStorage
   const [tasksData, setTasksData] = useState<ITask[] | []>(() => {
-    // return sessionStorage.getItem("lastUrlVisited") ?? "/";
     const storedTasks = localStorage.getItem("tasksData");
 
     // Get tasks from localStorage
     if (storedTasks) {
       return JSON.parse(storedTasks);
     }
-    // If not data, create empty ITask[]
+    // If no data, create empty ITask[]
     else {
       localStorage.setItem("tasksData", JSON.stringify([]));
       return [];
     }
   });
 
-  // Stores all of the original tasks.
-  // const [tasksData, setTasksData] = useState<ITask[]>(exampleData);
+  // Gets and sets schema for customFields in localStorage
+  const [customFields, setCustomFields] = useState<ICustomField[]>(() => {
+    const storedCustomFields = localStorage.getItem("customFields");
+
+    // Get tasks from localStorage
+    if (storedCustomFields) {
+      return JSON.parse(storedCustomFields);
+    }
+    // If no data, create empty ICustomField[]
+    else {
+      localStorage.setItem("customFields", JSON.stringify([]));
+      return [];
+    }
+  });
+
+  // Stores some settings in localStorage
+  // Sotres currentIndex
+  const [settings, setSettings] = useState(() => {
+    const storedSettings = localStorage.getItem("settings");
+
+    // Get settings from localStorage
+    if (storedSettings) {
+      return JSON.parse(storedSettings);
+    }
+    // No data, create default settings
+    else {
+      localStorage.setItem("settings", JSON.stringify({ currentIndex: 1 }));
+      return { currentIndex: 1 };
+    }
+  });
 
   // Stores tasks to be displayed.
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
-  // Stores length of tasks to use as id.
-  // Currently using exampleData
+  // Stores id to be used as new tasks are added.
   // INDEX STARTS AT 1
-  const [currentIndex, setCurrentIndex] = useState(exampleData.length);
   // const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   // Pagination variables
@@ -63,9 +94,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Adds a new task to tasksData.
   const addTask = (newTask: ITask) => {
-    // Adding id to task
-    newTask.id = currentIndex;
-    setCurrentIndex((prevIndex) => prevIndex + 1);
+    // Adding id to task, increment id, save to state and localstorage
+    newTask.id = settings.currentIndex;
+    const newSettings = settings;
+    newSettings.currentIndex++;
+    setSettings(newSettings);
+    localStorage.setItem("settings", JSON.stringify(newSettings));
 
     // Creates shallow copy of tasksData.
     const updatedTasksData: ITask[] = [...tasksData];
@@ -73,6 +107,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Adds task
     updatedTasksData.push(newTask);
 
+    // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
@@ -197,30 +232,117 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     return sortedByStatus;
   };
 
+  // CustomField
+  // Sorts text and boolean
+  // Returns sorted tasksData based on text and customField.
+  const sortByCustom = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    // Sort function for array
+    const sortedByTitle = sortedAndFilteredTasks.sort((a, b) => {
+      // Gets the fields to compare
+      const aCustomField = a.customFields?.[newSettings.columnSorted].value;
+      const bCustomField = b.customFields?.[newSettings.columnSorted].value;
+
+      // If both fields are undefined, return 0. Don't change order.
+      if (aCustomField === undefined && bCustomField === undefined) {
+        return 0;
+      }
+      // If only 1 is undefined, sort
+      if (aCustomField === undefined) return sortedAsc ? -1 : 1;
+      if (bCustomField === undefined) return sortedAsc ? 1 : -1;
+
+      // Normal sort between 2 defined values
+      if (aCustomField < bCustomField) return sortedAsc ? -1 : 1;
+      if (aCustomField > bCustomField) return sortedAsc ? 1 : -1;
+      return 0;
+    });
+
+    return sortedByTitle;
+  };
+
+  // CustomField
+  // Returns sorted taskData based on number and customField.
+  const sortByNumber = (
+    newSettings: ISortedFilteredSettings,
+    sortedAndFilteredTasks: ITask[]
+  ) => {
+    const sortedAsc = newSettings.sortedAscending;
+
+    const sortedByNumber = sortedAndFilteredTasks.sort((a, b) => {
+      const aCustomField = a.customFields?.[newSettings.columnSorted]?.value;
+      const bCustomField = b.customFields?.[newSettings.columnSorted]?.value;
+
+      // If both fields are undefined, return 0. Don't change order.
+      if (aCustomField === undefined && bCustomField === undefined) {
+        return 0;
+      }
+      // If only 1 is undefined, sort
+      if (aCustomField === undefined) return sortedAsc ? -1 : 1;
+      if (bCustomField === undefined) return sortedAsc ? 1 : -1;
+
+      // Parse numbers
+      const aParsed = parseFloat(aCustomField as string);
+      const bParsed = parseFloat(bCustomField as string);
+
+      // Normal sort between 2 defined values
+      if (aParsed < bParsed) return sortedAsc ? -1 : 1;
+      if (aParsed > bParsed) return sortedAsc ? 1 : -1;
+      return 0;
+    });
+
+    return sortedByNumber;
+  };
+
   // Returns sorted tasksData based on sorting setting.
   // Current newSettings and tasks are passed as arguments.
   const runSort = (
     newSettings: ISortedFilteredSettings,
     sortedAndFilteredTasks: ITask[]
   ) => {
+    // Gets the column and it's type
     const column = newSettings.columnSorted;
+    const columnType = customFields.find(
+      (field) => field.title === column
+    )?.type;
 
-    switch (column) {
-      case "title":
+    // Runs the proper sort based on the column selected
+    switch (true) {
+      case column === "title":
         return (
           sortByTitle(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
-      case "priority":
+      case column === "priority":
         return (
           sortByPriority(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
-      case "status":
+      case column === "status":
         return (
           sortByStatus(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
+      case customFields.some((field) => field.title === column):
+        if (columnType === "text") {
+          return (
+            sortByCustom(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        } else if (columnType === "number") {
+          return (
+            sortByNumber(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        } else {
+          return (
+            sortByCustom(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        }
     }
 
     // Returns default array to avoid returning undefined
@@ -385,6 +507,81 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setDisplayedData(paginatedTasks);
   };
 
+  // Adds a new column.
+  // Updates every task with the new column with appropriate default value
+  // Updates customField state and localStorage.
+  const addNewColumn = (newColumn: ICustomField) => {
+    // Object storing default columns by type
+    const DefaultColumns = {
+      text: { type: "text", value: "" },
+      number: { type: "number", value: 0 },
+      checkbox: { type: "checkbox", value: false },
+    };
+
+    // Update each task's customFields
+    const updatedTasks = tasksData.map((task) => {
+      const updatedTask = { ...task };
+      // Adds custom field if it doesn't exist.
+      if (updatedTask.customFields === undefined) {
+        updatedTask.customFields = {};
+      }
+
+      // Creates default column data
+      const newColumnData: ICustomData = {
+        type: newColumn.type,
+        value:
+          DefaultColumns[newColumn.type as keyof typeof DefaultColumns].value,
+      };
+
+      // Updates task with new column
+      updatedTask.customFields[newColumn.title] = newColumnData;
+
+      return updatedTask;
+    });
+
+    // Saves updated customFields in state and localStorage
+    const updatedCustomFields = customFields;
+    updatedCustomFields.push(newColumn);
+    setCustomFields(updatedCustomFields);
+    localStorage.setItem("customFields", JSON.stringify(updatedCustomFields));
+
+    // Saves tasks in state and localStorage
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
+  // Removes a given custom column
+  // Updates every task by removing the column's data from it's customFields
+  // Updates customField state and localStorage.
+  const deleteColumn = (columnToDelete: string) => {
+    // Update each task's customFields
+    const updatedTasks = tasksData.map((task) => {
+      const updatedTask = { ...task };
+      // Adds custom field if it doesn't exist.
+      if (updatedTask.customFields === undefined) {
+        updatedTask.customFields = {};
+      }
+
+      // Deletes column from task
+      delete updatedTask.customFields[columnToDelete];
+
+      return updatedTask;
+    });
+
+    // Updates the customFields by removing column
+    const updatedCustomFields = customFields.filter(
+      (field) => field.title !== columnToDelete
+    );
+
+    // Saves updated customFields in state and localStorage
+    setCustomFields(updatedCustomFields);
+    localStorage.setItem("customFields", JSON.stringify(updatedCustomFields));
+
+    // Saves tasks in state and localStorage
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -415,6 +612,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         paginationLoading,
         setPaginationLoading,
         importExampleData,
+        addNewColumn,
+        deleteColumn,
+        customFields,
       }}
     >
       {children}

@@ -93,6 +93,13 @@ export const Actions = () => {
           cancelAction={closeAddTaskModal}
         />
       ) : null}
+      {actionModalOpen ? (
+        <ActionModal
+          ref={ActionModalRef}
+          cancelAction={() => setActionModalOpen(false)}
+        />
+      ) : null}
+
       <div>
         <label htmlFor="size" className="mb-1">
           Page Size:
@@ -125,7 +132,6 @@ export const Actions = () => {
         >
           <FontAwesomeIcon icon={faEllipsis} className="text-slate-600" />
         </button>
-        {actionModalOpen ? <ActionModal ref={ActionModalRef} /> : null}
       </div>
     </div>
   );

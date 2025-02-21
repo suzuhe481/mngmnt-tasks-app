@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useState, use, useEffect } from "react";
 import { ITask } from "../../types/types";
+
+import { CustomInputs } from "./CustomInputs";
+
+import { DataContext } from "../../context/DataContext";
 
 interface IModalProps {
   title: string;
@@ -7,6 +11,22 @@ interface IModalProps {
   confirmAction: (newTask: ITask) => void;
   cancelAction: () => void;
 }
+
+// Used in reduce
+// Define the type for the custom fields object
+interface CustomFieldObject {
+  [key: string]: {
+    type: string;
+    value: string | number | boolean;
+  };
+}
+
+// Define default values for each field
+const DefaultFields = {
+  text: { type: "text", value: "" },
+  number: { type: "number", value: 0 },
+  checkbox: { type: "checkbox", value: false },
+};
 
 const AddTaskModal = ({
   title,
@@ -18,7 +38,48 @@ const AddTaskModal = ({
     title: "",
     status: "not_started",
     priority: "none",
+    customFields: {},
   });
+
+  // This effect sets the default customField for the newTask state when on page load.
+  useEffect(() => {
+    // Creates default custom fields
+    const initialCustomFields: CustomFieldObject = customFields.reduce(
+      (acc, field) => {
+        // Gets the default value for current field
+        const defaultValue =
+          DefaultFields[field.type as keyof typeof DefaultFields];
+
+        // Assigns default value for current field
+        if (defaultValue) {
+          acc[field.title] = {
+            type: field.type,
+            value: defaultValue.value,
+          };
+        }
+
+        return acc;
+      },
+      {} as CustomFieldObject
+    );
+
+    // Set the new task custom fields with the initial values
+    setNewTask((prevTask) => ({
+      ...prevTask,
+      customFields: initialCustomFields,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const context = use(DataContext);
+
+  // Checks for undefined context.
+  if (!context) {
+    return;
+  }
+
+  // Using context
+  const { customFields } = context;
 
   // Handles form changes for new task
   const handleTaskChange = (
@@ -33,6 +94,20 @@ const AddTaskModal = ({
       ...newTask,
       [name]: value,
     });
+  };
+
+  // Handle custom field change to update newTask state
+  const handleCustomFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked, type } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setNewTask((prevTask) => ({
+      ...prevTask,
+      customFields: {
+        ...prevTask.customFields,
+        [name]: { type, value: newValue },
+      },
+    }));
   };
 
   // Form submission to add new task.
@@ -55,7 +130,7 @@ const AddTaskModal = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 w-full overflow-hidden">
       <div
         onClick={(event) => event.stopPropagation()}
-        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw]"
+        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
       >
         <form>
           <div className="font-bold text-2xl">{title}</div>
@@ -109,6 +184,11 @@ const AddTaskModal = ({
               <option value="urgent">Urgent</option>
             </select>
           </div>
+
+          <CustomInputs
+            customFields={newTask.customFields}
+            handleCustomFieldChange={handleCustomFieldChange}
+          />
 
           <div className="flex flex-row justify-end items-center w-full gap-4 mt-8 text-lg">
             <button
