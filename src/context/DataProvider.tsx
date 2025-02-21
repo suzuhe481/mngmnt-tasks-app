@@ -550,6 +550,37 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
   };
 
+  // Removes a given custom column
+  // Updates every task by removing the column's data from it's customFields
+  // Updates customField state and localStorage.
+  const deleteColumn = (columnToDelete: string) => {
+    // Update each task's customFields
+    const updatedTasks = tasksData.map((task) => {
+      const updatedTask = { ...task };
+      // Adds custom field if it doesn't exist.
+      if (updatedTask.customFields === undefined) {
+        updatedTask.customFields = {};
+      }
+
+      // Deletes column from task
+      delete updatedTask.customFields[columnToDelete];
+
+      return updatedTask;
+    });
+
+    // Updates the customFields by removing column
+    const updatedCustomFields = customFields.filter(
+      (field) => field.title !== columnToDelete
+    );
+
+    // Saves updated customFields in state and localStorage
+    setCustomFields(updatedCustomFields);
+    localStorage.setItem("customFields", JSON.stringify(updatedCustomFields));
+
+    // Saves tasks in state and localStorage
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
 
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
