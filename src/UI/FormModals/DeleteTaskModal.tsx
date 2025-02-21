@@ -1,5 +1,7 @@
 import { ITask } from "../../types/types";
 
+import { CustomInputs } from "./CustomInputs";
+
 interface IModalProps {
   title: string;
   description?: string;
@@ -33,7 +35,7 @@ const DeleteTaskModal = ({
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw]"
+        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
       >
         <div>
           <div className="font-bold text-2xl">{title}</div>
@@ -90,6 +92,11 @@ const DeleteTaskModal = ({
               <option value="urgent">Urgent</option>
             </select>
           </div>
+
+          <CustomInputs
+            customFields={task.customFields}
+            disabledInputs={true}
+          />
 
           <div className="flex flex-row justify-end items-center w-full gap-4 mt-8 text-lg">
             <button

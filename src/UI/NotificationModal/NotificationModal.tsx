@@ -26,7 +26,7 @@ const NotificationModal = ({
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw]"
+        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
       >
         <form>
           <div className="font-bold text-2xl">{title}</div>

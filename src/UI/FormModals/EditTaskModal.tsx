@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ITask } from "../../types/types";
 
+import { CustomInputs } from "./CustomInputs";
+
 interface IModalProps {
   title: string;
   description?: string;
@@ -21,6 +23,7 @@ const EditTaskModal = ({
     title: task.title,
     status: task.status,
     priority: task.priority,
+    customFields: task.customFields,
   });
 
   // Handles form changes for new task
@@ -36,6 +39,20 @@ const EditTaskModal = ({
       ...editedTask,
       [name]: value,
     });
+  };
+
+  // Handles custom field change to update newTask state
+  const handleCustomFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked, type } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setEditedTask((prevTask) => ({
+      ...prevTask,
+      customFields: {
+        ...prevTask.customFields,
+        [name]: { type, value: newValue },
+      },
+    }));
   };
 
   // Form submission to edit a task.
@@ -58,7 +75,7 @@ const EditTaskModal = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 w-full overflow-hidden">
       <div
         onClick={(event) => event.stopPropagation()}
-        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw]"
+        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
       >
         <form>
           <div className="font-bold text-2xl">{title}</div>
@@ -115,6 +132,11 @@ const EditTaskModal = ({
               <option value="urgent">Urgent</option>
             </select>
           </div>
+
+          <CustomInputs
+            customFields={editedTask.customFields}
+            handleCustomFieldChange={handleCustomFieldChange}
+          />
 
           <div className="flex flex-row justify-end items-center w-full gap-4 mt-8 text-lg">
             <button
