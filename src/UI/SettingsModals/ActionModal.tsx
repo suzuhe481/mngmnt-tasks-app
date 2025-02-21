@@ -128,15 +128,32 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         />
       ) : null}
       <button
-        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600  bg-slate-100 hover:bg-blue-200`}
+        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 bg-slate-100 hover:bg-blue-200`}
       >
         Reset Filters
       </button>
       <button
         onClick={openImportModalModal}
-        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 last:border-0 bg-slate-100 hover:bg-blue-200`}
+        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 bg-slate-100 hover:bg-blue-200`}
       >
         Load Example Data
+      </button>
+      <button
+        onClick={openAddNewColumnModal}
+        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 last:border-0 bg-slate-100 hover:bg-blue-200`}
+      >
+        Add New Column
+      </button>
+      <button
+        onClick={openDeleteColumnModal}
+        disabled={customFields[0] === undefined ? true : false}
+        className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 last:border-0 bg-slate-100 hover:bg-blue-200 ${
+          customFields[0] === undefined
+            ? "cursor-not-allowed brightness-200"
+            : "cursor-pointer"
+        }`}
+      >
+        Remove Column
       </button>
     </div>
   );
