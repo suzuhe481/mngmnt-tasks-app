@@ -113,7 +113,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
   return (
     <div
       ref={ref}
-      className="absolute flex flex-col w-[200px] z-20 rounded-xl overflow-hidden bg-slate-100 border-1 border-slate-400 right-0 top-full mt-1 shadow-lg"
+      className="animate-fadeInSlideDown absolute flex flex-col w-[200px] z-20 rounded-xl overflow-hidden bg-slate-100 border-1 border-slate-400 right-0 top-full mt-1 shadow-lg"
     >
       {importModalOpen ? (
         <NotificationModal
