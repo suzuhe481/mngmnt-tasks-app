@@ -35,7 +35,7 @@ const DeleteTaskModal = ({
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
+        className="animate-fadeInSlideUp bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
       >
         <div>
           <div className="font-bold text-2xl">{title}</div>
@@ -100,13 +100,13 @@ const DeleteTaskModal = ({
 
           <div className="flex flex-row justify-end items-center w-full gap-4 mt-8 text-lg">
             <button
-              className="px-2 py-1 border-2 border-sky-400 rounded-lg hover:brightness-75 cursor-pointer"
+              className="animate-all px-2 py-1 border-2 border-sky-400 rounded-lg hover:brightness-50 cursor-pointer"
               onClick={cancelAction}
             >
               Cancel
             </button>
             <button
-              className="bg-sky-400 text-white font-bold px-2 py-1 rounded-lg hover:brightness-75 cursor-pointer"
+              className="animate-all bg-sky-400 text-white font-bold px-2 py-1 rounded-lg hover:brightness-75 cursor-pointer"
               onClick={ConfirmDeleteTask}
             >
               Confirm

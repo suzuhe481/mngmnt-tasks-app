@@ -45,7 +45,11 @@ export const Header = () => {
       <tr>
         <th className="p-2 border-2 border-slate-300 w-2">
           <div className="flex flex-col justify-center items-center">
-            <input type="checkbox" id="select-all" className="w-6 h-6" />
+            <input
+              type="checkbox"
+              id="select-all"
+              className="w-6 h-6 cursor-pointer"
+            />
           </div>
         </th>
         <th className="p-2 border-2 border-slate-300"></th>

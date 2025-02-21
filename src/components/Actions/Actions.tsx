@@ -100,7 +100,7 @@ export const Actions = () => {
         />
       ) : null}
 
-      <div>
+      <div className="flex flex-row gap-4 justify-center items-center">
         <label htmlFor="size" className="mb-1">
           Page Size:
         </label>
@@ -110,7 +110,7 @@ export const Actions = () => {
           required
           value={pageSize}
           onChange={(event) => changePageSize(Number(event.target.value))}
-          className="border-2 border-slate-400 py-2 focus:outline-none focus:border-[#75C1FF] focus:shadow-[0_0_0_2px_#B3E0FF]"
+          className="border-2 border-slate-400 py-2 cursor-pointer focus:outline-none focus:border-[#75C1FF] focus:shadow-[0_0_0_2px_#B3E0FF]"
         >
           <option value="5">5</option>
           <option value="10">10</option>
@@ -121,14 +121,14 @@ export const Actions = () => {
       <div className="flex flex-row gap-2">
         <button
           onClick={openAddTaskModal}
-          className="bg-blue-500 h-12 rounded-sm px-4 hover:bg-blue-600 font-bold text-white cursor-pointer"
+          className="animate-all bg-blue-500 h-12 rounded-sm px-4 hover:bg-blue-600 font-bold text-white cursor-pointer"
         >
           New Task
         </button>
         <button
           ref={ActionIconRef}
           onClick={() => setActionModalOpen(!actionModalOpen)}
-          className="bg-slate-100 border-2 border-slate-300 hover:bg-slate-400 rounded-sm p-1 w-12 h-12 cursor-pointer"
+          className="animate-all bg-slate-100 border-2 border-slate-300 hover:bg-slate-400 rounded-sm p-1 w-12 h-12 cursor-pointer"
         >
           <FontAwesomeIcon icon={faEllipsis} className="text-slate-600" />
         </button>
