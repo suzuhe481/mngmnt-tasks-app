@@ -27,8 +27,13 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
   }
 
   // Using context
-  const { importExampleData, addNewColumn, deleteColumn, customFields } =
-    context;
+  const {
+    importExampleData,
+    addNewColumn,
+    deleteColumn,
+    customFields,
+    resetFilters,
+  } = context;
 
   // Title and Description for Import Data modal.
   const ImportDataTitle = "Import Example Data?";
@@ -97,6 +102,14 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     deleteColumn(columnToDelete);
   };
 
+  // Resets filters and search settings
+  const confirmResetFilters = () => {
+    resetFilters();
+
+    // Closes Action modal
+    cancelAction();
+  };
+
   return (
     <div
       ref={ref}
@@ -128,6 +141,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         />
       ) : null}
       <button
+        onClick={confirmResetFilters}
         className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 bg-slate-100 hover:bg-blue-200`}
       >
         Reset Filters
