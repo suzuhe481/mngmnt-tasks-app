@@ -110,6 +110,23 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
           cancelAction={closeImportModalModal}
         />
       ) : null}
+      {addNewColumnModalOpen ? (
+        <AddNewColumnModal
+          title={NewColumnTitle}
+          description={NewColumnDesc}
+          confirmAction={confirmAddNewColumn}
+          cancelAction={closeAddNewColumnModal}
+        />
+      ) : null}
+      {deleteColumnModalOpen ? (
+        <DeleteColumnModal
+          title={DeleteColumnTitle}
+          description={DeleteColumnDesc}
+          confirmAction={confirmRemoveColumn}
+          cancelAction={closeDeleteColumnModal}
+          customFields={customFields}
+        />
+      ) : null}
       <button
         className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600  bg-slate-100 hover:bg-blue-200`}
       >
