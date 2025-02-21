@@ -49,6 +49,52 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
   const confirmImport = () => {
     importExampleData();
     setImportModalOpen(false);
+
+    // Closes Action modal
+    cancelAction();
+  };
+
+  // Title and Description for Adding Column modal.
+  const NewColumnTitle = "Add New Custom Column";
+  const NewColumnDesc = "New columns can be text, a number, or a checkbox.";
+
+  // Opens Add New Column Modal
+  const openAddNewColumnModal = () => {
+    setAddNewColumnModalOpen(true);
+  };
+
+  // Closes Add New Column Modal
+  const closeAddNewColumnModal = () => {
+    setAddNewColumnModalOpen(false);
+  };
+
+  // Confirms adding new column
+  const confirmAddNewColumn = (newColumn: ICustomField) => {
+    // Add new column
+    addNewColumn(newColumn);
+
+    // Closes Action modal
+    cancelAction();
+  };
+
+  // Title and Description for Deleting Column Modal.
+  const DeleteColumnTitle = "Delete a column";
+  const DeleteColumnDesc =
+    "Pick a column to PERMANENTLY delete. This will alos delete it's data from tasks.";
+
+  // Opens the Delete Column Modal
+  const openDeleteColumnModal = () => {
+    setDeleteColumnModalOpen(true);
+  };
+
+  // Closes the Delete Column Modal
+  const closeDeleteColumnModal = () => {
+    setDeleteColumnModalOpen(false);
+  };
+
+  // Confirms removing a column
+  const confirmRemoveColumn = (columnToDelete: string) => {
+    deleteColumn(columnToDelete);
   };
 
   return (
