@@ -4,6 +4,9 @@ This is MNGMNT. An application used to help organize your tasks, inspired by oth
 
 The clever origin of the name is that it's just the word "Management" without the vowels.
 
+Also included are my drawings and my thought process during this project. This is the Excalidraw file called "Mngmnt Whiteboarding.excalidraw". You can use this file to view my notes and drawings at the [Excalidraw website](https://excalidraw.com/).
+
+
 ## Features
 
 - Task organization in a table display.
