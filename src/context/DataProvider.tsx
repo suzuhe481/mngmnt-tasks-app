@@ -303,24 +303,46 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     newSettings: ISortedFilteredSettings,
     sortedAndFilteredTasks: ITask[]
   ) => {
+    // Gets the column and it's type
     const column = newSettings.columnSorted;
+    const columnType = customFields.find(
+      (field) => field.title === column
+    )?.type;
 
-    switch (column) {
-      case "title":
+    // Runs the proper sort based on the column selected
+    switch (true) {
+      case column === "title":
         return (
           sortByTitle(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
-      case "priority":
+      case column === "priority":
         return (
           sortByPriority(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
-      case "status":
+      case column === "status":
         return (
           sortByStatus(newSettings, sortedAndFilteredTasks) ||
           sortedAndFilteredTasks
         );
+      case customFields.some((field) => field.title === column):
+        if (columnType === "text") {
+          return (
+            sortByCustom(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        } else if (columnType === "number") {
+          return (
+            sortByNumber(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        } else {
+          return (
+            sortByCustom(newSettings, sortedAndFilteredTasks) ||
+            sortedAndFilteredTasks
+          );
+        }
     }
 
     // Returns default array to avoid returning undefined
