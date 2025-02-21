@@ -507,6 +507,50 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setDisplayedData(paginatedTasks);
   };
 
+  // Adds a new column.
+  // Updates every task with the new column with appropriate default value
+  // Updates customField state and localStorage.
+  const addNewColumn = (newColumn: ICustomField) => {
+    // Object storing default columns by type
+    const DefaultColumns = {
+      text: { type: "text", value: "" },
+      number: { type: "number", value: 0 },
+      checkbox: { type: "checkbox", value: false },
+    };
+
+    // Update each task's customFields
+    const updatedTasks = tasksData.map((task) => {
+      const updatedTask = { ...task };
+      // Adds custom field if it doesn't exist.
+      if (updatedTask.customFields === undefined) {
+        updatedTask.customFields = {};
+      }
+
+      // Creates default column data
+      const newColumnData: ICustomData = {
+        type: newColumn.type,
+        value:
+          DefaultColumns[newColumn.type as keyof typeof DefaultColumns].value,
+      };
+
+      // Updates task with new column
+      updatedTask.customFields[newColumn.title] = newColumnData;
+
+      return updatedTask;
+    });
+
+    // Saves updated customFields in state and localStorage
+    const updatedCustomFields = customFields;
+    updatedCustomFields.push(newColumn);
+    setCustomFields(updatedCustomFields);
+    localStorage.setItem("customFields", JSON.stringify(updatedCustomFields));
+
+    // Saves tasks in state and localStorage
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
