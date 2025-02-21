@@ -8,7 +8,12 @@ import {
 } from "../components/TasksTable/components/functions/formatData";
 
 // Types
-import { ITask, ISortedFilteredSettings } from "../types/types";
+import {
+  ITask,
+  ISortedFilteredSettings,
+  ICustomField,
+  ICustomData,
+} from "../types/types";
 
 interface IDataProviderProps {
   children: React.ReactNode;
