@@ -99,7 +99,11 @@ export const TaskCard = ({ task }: ITaskCard) => {
       <td className="px-6 py-3 border-2 border-gray-300">
         <label htmlFor="select" className="h-full">
           <div className="flex flex-col justify-center items-center">
-            <input type="checkbox" id="select" className="w-6 h-6" />
+            <input
+              type="checkbox"
+              id="select"
+              className="w-6 h-6 cursor-pointer"
+            />
           </div>
         </label>
       </td>
@@ -107,14 +111,14 @@ export const TaskCard = ({ task }: ITaskCard) => {
         <FontAwesomeIcon
           icon={faPencil}
           onClick={openEditTaskModal}
-          className="text-xl text-yellow-600 cursor-pointer"
+          className="animate-all text-xl text-yellow-400 cursor-pointer hover:text-yellow-800"
         />
       </td>
       <td className="px-6 py-3 border-2 border-gray-300 text-center align-middle">
         <FontAwesomeIcon
           icon={faTrash}
           onClick={openDeleteTaskModal}
-          className="text-xl text-red-700 cursor-pointer"
+          className="animate-all text-xl text-red-400 cursor-pointer hover:text-red-900"
         />
       </td>
       <td className="p-2 border-2 border-gray-300 text-left">{title}</td>

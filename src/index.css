@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@theme {
+  --animate-all: transition-all duration-200 ease-in-out;
+  --animate-fadeInSlideUp: fadeInSlideUp 0.3s;
+  --animate-fadeInSlideDown: fadeInSlideDown 0.3s;
+
+  @keyframes fadeInSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
+
+  @keyframes fadeInSlideDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
+}
+
+/* Simple general animation */
+.animate-all {
+  transition: all 0.2s ease-in-out;
+}
