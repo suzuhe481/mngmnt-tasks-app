@@ -502,6 +502,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   const importExampleData = () => {
     setTasksData(exampleData);
 
+    // Resets custom fields
+    setCustomFields([]);
+
     // Paginate using current settings before storing as displayed.
     const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
     setDisplayedData(paginatedTasks);
@@ -582,6 +585,22 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
   };
 
+  // Resets filters to default values
+  const resetFilters = () => {
+    const resetFilters = {
+      sorted: false,
+      sortedAscending: false,
+      columnSorted: "",
+      filtered: false,
+      filterType: "title",
+      filteredText: "",
+    };
+
+    setSortedOrFilteredSettings(resetFilters);
+
+    sortAndFilter(resetFilters);
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -615,6 +634,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         addNewColumn,
         deleteColumn,
         customFields,
+        resetFilters,
       }}
     >
       {children}

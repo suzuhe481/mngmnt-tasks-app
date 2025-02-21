@@ -28,6 +28,8 @@ interface IDataContextProps {
 
   addNewColumn: (newColumn: ICustomField) => void;
   deleteColumn: (columnToDelete: string) => void;
+
+  resetFilters: () => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(
