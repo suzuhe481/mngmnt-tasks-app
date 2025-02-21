@@ -2,13 +2,22 @@ import { RefObject, use, useState } from "react";
 import { DataContext } from "../../context/DataContext";
 
 import NotificationModal from "../NotificationModal/NotificationModal";
+import { AddNewColumnModal } from "../FormModals/AddNewColumnModal";
+import { DeleteColumnModal } from "../FormModals/DeleteColumnModal";
+
+import { ICustomField } from "../../types/types";
 
 interface IFilterModalProps {
   ref: RefObject<HTMLDivElement | null>;
+  cancelAction: () => void;
 }
 
-const ActionModal = ({ ref }: IFilterModalProps) => {
+const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
   const [importModalOpen, setImportModalOpen] = useState<boolean>(false);
+  const [addNewColumnModalOpen, setAddNewColumnModalOpen] =
+    useState<boolean>(false);
+  const [deleteColumnModalOpen, setDeleteColumnModalOpen] =
+    useState<boolean>(false);
 
   const context = use(DataContext);
 
@@ -18,7 +27,8 @@ const ActionModal = ({ ref }: IFilterModalProps) => {
   }
 
   // Using context
-  const { importExampleData } = context;
+  const { importExampleData, addNewColumn, deleteColumn, customFields } =
+    context;
 
   // Title and Description for Import Data modal.
   const ImportDataTitle = "Import Example Data?";
