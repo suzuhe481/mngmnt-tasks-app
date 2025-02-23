@@ -33,7 +33,7 @@ export const TaskCard = ({ task }: ITaskCard) => {
   }
 
   // Using context
-  const { editTask, deleteTask, customFields } = context;
+  const { editTask, deleteTask, customFields, toggleTask } = context;
 
   const title = task.title;
   const status = formatStatus(task.status);
@@ -103,6 +103,8 @@ export const TaskCard = ({ task }: ITaskCard) => {
               type="checkbox"
               id="select"
               className="w-6 h-6 cursor-pointer"
+              checked={task.selected ? task.selected : false}
+              onClick={() => toggleTask(task.id ? task.id : 0)}
             />
           </div>
         </label>
