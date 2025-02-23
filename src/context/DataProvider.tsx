@@ -669,6 +669,21 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     }
   };
 
+  // Toggles a single task's selected property between true/false
+  const toggleTask = (selectedTaskID: number) => {
+    const updatedTasks = tasksData.map((task) => {
+      return task.id === selectedTaskID
+        ? { ...task, selected: !task.selected }
+        : task;
+    });
+
+    setTasksData(updatedTasks);
+    setAllTasksSelected(false);
+
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
