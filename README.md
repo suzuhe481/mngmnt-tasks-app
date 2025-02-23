@@ -4,6 +4,21 @@ This is MNGMNT. An application used to help organize your tasks, inspired by oth
 
 The clever origin of the name is that it's just the word "Management" without the vowels.
 
+[Live Demo](https://mngmnt.hectorsuazo.com)
+
+## Beta Version
+
+Want to see more features? Here's the beta version of MNGMNT which includes features not yet in the released version.
+
+[MNGMNT Beta Demo]()
+
+<details>
+  <summary>Click here to see beta features.</summary>
+
+- Reset the filters back to their default.
+- Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
+</details>
+
 ## Features
 
 - Task organization in a table display.
