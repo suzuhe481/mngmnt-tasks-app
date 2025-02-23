@@ -684,6 +684,41 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
   };
 
+  // Deletes all selected tasks
+  const deleteBulkTasks = () => {
+    // Filters out selected tasks.
+    const updatedTasksData = tasksData
+      .filter((task) => {
+        return !task.selected;
+      })
+      // Sets all task's selected to false
+      .map((task) => {
+        return { ...task, selected: false };
+      });
+
+    setAllTasksSelected(false);
+
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
