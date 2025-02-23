@@ -233,9 +233,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         onClick={openDeleteBulkModal}
         disabled={tasksSelected < 1 ? true : false}
         className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 bg-red-200 hover:bg-red-400 ${
-          tasksSelected < 1
-            ? "cursor-not-allowed brightness-200"
-            : "cursor-pointer"
+          tasksSelected < 1 ? "cursor-not-allowed opacity-50" : "cursor-pointer"
         }`}
       >
         Delete Multiple ({tasksSelected})
@@ -244,9 +242,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         onClick={openEditBulkModal}
         disabled={tasksSelected < 1 ? true : false}
         className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 bg-yellow-200 hover:bg-yellow-400 ${
-          tasksSelected < 1
-            ? "cursor-not-allowed brightness-200"
-            : "cursor-pointer"
+          tasksSelected < 1 ? "cursor-not-allowed opacity-50" : "cursor-pointer"
         }`}
       >
         Edit Multiple ({tasksSelected})
@@ -262,7 +258,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         disabled={customFields[0] === undefined ? true : false}
         className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 last:border-0 bg-slate-100 hover:bg-blue-200 ${
           customFields[0] === undefined
-            ? "cursor-not-allowed brightness-200"
+            ? "cursor-not-allowed opacity-50"
             : "cursor-pointer"
         }`}
       >
