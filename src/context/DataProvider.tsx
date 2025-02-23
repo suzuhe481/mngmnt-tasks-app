@@ -167,6 +167,14 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setDisplayedData(paginatedTasks);
 
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
+
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
