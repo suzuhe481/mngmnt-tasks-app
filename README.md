@@ -10,7 +10,7 @@ The clever origin of the name is that it's just the word "Management" without th
 
 Want to see more features? Here's the beta version of MNGMNT which includes features not yet in the released version.
 
-[MNGMNT Beta Demo](https://d91d9ad2.mngmnt-tasks-app.pages.dev/)
+[MNGMNT Beta Demo](https://33a240eb.mngmnt-tasks-app.pages.dev/)
 
 <details>
   <summary>Click here to see beta features.</summary>
