@@ -30,6 +30,12 @@ interface IDataContextProps {
   deleteColumn: (columnToDelete: string) => void;
 
   resetFilters: () => void;
+
+  allTasksSelected: boolean;
+  toggleSelectedTasks: () => void;
+  toggleTask: (selectedTaskID: number) => void;
+  deleteBulkTasks: () => void;
+  editBulkTasks: (column: string, newValue: string) => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(
