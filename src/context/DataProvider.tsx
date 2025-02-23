@@ -52,7 +52,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   });
 
   // Stores some settings in localStorage
-  // Sotres currentIndex
+  // Sorts currentIndex
+  // INDEX STARTS AT 1
   const [settings, setSettings] = useState(() => {
     const storedSettings = localStorage.getItem("settings");
 
@@ -135,7 +136,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return;
     }
 
-    // Updates the task at the id of editTask.id.
+    // Updates the task at the id of deleteTask.id.
     const updatedTasksData = tasksData.filter((task) => {
       return task.id !== deleteTask.id;
     });
