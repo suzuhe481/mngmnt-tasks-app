@@ -719,6 +719,31 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
 
+  // Edits all selected tasks on the given with the given value
+  const editBulkTasks = (column: string, newValue: string) => {
+    // Changing only the selected tasks to the the given newValue on the given column
+    // Unselects task
+    const updatedTasksData = tasksData.map((task) => {
+      return task.selected
+        ? { ...task, selected: false, [column]: newValue }
+        : task;
+    });
+
+    setAllTasksSelected(false);
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
