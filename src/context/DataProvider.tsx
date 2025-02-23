@@ -540,6 +540,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Resets custom fields
     setCustomFields([]);
 
+    // Saving new index based on example data
+    const newSettings = settings;
+    newSettings.currentIndex = exampleData.length + 1;
+    setSettings(newSettings);
+    localStorage.setItem("settings", JSON.stringify(newSettings));
+
     // Paginate using current settings before storing as displayed.
     const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
     setDisplayedData(paginatedTasks);
