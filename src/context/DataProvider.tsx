@@ -778,6 +778,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         deleteColumn,
         customFields,
         resetFilters,
+        allTasksSelected,
+        toggleSelectedTasks,
+        toggleTask,
+        deleteBulkTasks,
+        editBulkTasks,
       }}
     >
       {children}
