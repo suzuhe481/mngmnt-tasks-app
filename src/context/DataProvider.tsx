@@ -642,6 +642,33 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     sortAndFilter(resetFilters);
   };
 
+  // Toggles every tasks's selected state between true/false
+  const toggleSelectedTasks = () => {
+    // Sets all task's selected to false.
+    if (allTasksSelected) {
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: false };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(false);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    } else {
+      // Sets all tasks's selected to true.
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: true };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(true);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    }
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
