@@ -72,9 +72,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
-  // Stores id to be used as new tasks are added.
-  // INDEX STARTS AT 1
-  // const [currentIndex, setCurrentIndex] = useState<number>(1);
+  // Stores if all tasks have been selected.
+  const [allTasksSelected, setAllTasksSelected] = useState<boolean>(false);
 
   // Pagination variables
   const [currentPage, setCurrentPage] = useState<number>(1);
