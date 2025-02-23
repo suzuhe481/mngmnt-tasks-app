@@ -107,6 +107,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Adds task
     updatedTasksData.push(newTask);
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
     // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
@@ -124,6 +133,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return task.id === editTask.id ? { ...task, ...editTask } : task;
     });
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
@@ -139,6 +157,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     const updatedTasksData = tasksData.filter((task) => {
       return task.id !== deleteTask.id;
     });
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
