@@ -4,6 +4,8 @@ import { DataContext } from "../../context/DataContext";
 import NotificationModal from "../NotificationModal/NotificationModal";
 import { AddNewColumnModal } from "../FormModals/AddNewColumnModal";
 import { DeleteColumnModal } from "../FormModals/DeleteColumnModal";
+import { DeleteBulkModal } from "../FormModals/DeleteBulkModal";
+import { EditBulkModal } from "../FormModals/EditBulkModal";
 
 import { ICustomField } from "../../types/types";
 
@@ -18,6 +20,9 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     useState<boolean>(false);
   const [deleteColumnModalOpen, setDeleteColumnModalOpen] =
     useState<boolean>(false);
+  const [deleteBulkModalOpen, setDeleteBulkModalOpen] =
+    useState<boolean>(false);
+  const [editBulkModalOpen, setEditBulkModalOpen] = useState<boolean>(false);
 
   const context = use(DataContext);
 
@@ -33,6 +38,9 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     deleteColumn,
     customFields,
     resetFilters,
+    deleteBulkTasks,
+    editBulkTasks,
+    tasksData,
   } = context;
 
   // Title and Description for Import Data modal.
@@ -82,10 +90,63 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     cancelAction();
   };
 
+  // Calculates how many tasks are selected
+  const tasksSelected = tasksData.reduce((acc, curr) => {
+    return curr.selected ? acc + 1 : acc;
+  }, 0);
+
+  // Title and Description for Deleting Multiple Tasks Modal.
+  const DeleteBulkTitle = "Delete Multiple Tasks";
+  const DeleteBulkDesc = `This will PERMANENTLY delete ${
+    tasksSelected === 1 ? `${tasksSelected} task.` : `${tasksSelected} tasks.`
+  }`;
+
+  // Opens the Delete Column Modal
+  const openDeleteBulkModal = () => {
+    setDeleteBulkModalOpen(true);
+  };
+
+  // Closes the Delete Column Modal
+  const closeDeleteBulkModal = () => {
+    setDeleteBulkModalOpen(false);
+  };
+
+  // Confirms removing a column
+  const confirmDeleteBulk = () => {
+    deleteBulkTasks();
+
+    // Closes Action modal
+    cancelAction();
+  };
+
+  // Title and Description for Editing Multiple Tasks Modal.
+  const EditBulkTitle = "Edit Multiple Tasks";
+  const EditBulkDesc = `This will PERMANENTLY edit ${
+    tasksSelected === 1 ? `${tasksSelected} task.` : `${tasksSelected} tasks.`
+  }`;
+
+  // Opens the Delete Column Modal
+  const openEditBulkModal = () => {
+    setEditBulkModalOpen(true);
+  };
+
+  // Closes the Delete Column Modal
+  const closeEditBulkModal = () => {
+    setEditBulkModalOpen(false);
+  };
+
+  // Confirms removing a column
+  const confirmEditBulk = (column: string, newValue: string) => {
+    editBulkTasks(column, newValue);
+
+    // Closes Action modal
+    cancelAction();
+  };
+
   // Title and Description for Deleting Column Modal.
   const DeleteColumnTitle = "Delete a column";
   const DeleteColumnDesc =
-    "Pick a column to PERMANENTLY delete. This will alos delete it's data from tasks.";
+    "Pick a column to PERMANENTLY delete. This will also delete it's data from tasks.";
 
   // Opens the Delete Column Modal
   const openDeleteColumnModal = () => {
@@ -140,6 +201,22 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
           customFields={customFields}
         />
       ) : null}
+      {deleteBulkModalOpen ? (
+        <DeleteBulkModal
+          title={DeleteBulkTitle}
+          description={DeleteBulkDesc}
+          confirmAction={confirmDeleteBulk}
+          cancelAction={closeDeleteBulkModal}
+        />
+      ) : null}
+      {editBulkModalOpen ? (
+        <EditBulkModal
+          title={EditBulkTitle}
+          description={EditBulkDesc}
+          confirmAction={confirmEditBulk}
+          cancelAction={closeEditBulkModal}
+        />
+      ) : null}
       <button
         onClick={confirmResetFilters}
         className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 bg-slate-100 hover:bg-blue-200`}
@@ -151,6 +228,28 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-slate-600 bg-slate-100 hover:bg-blue-200`}
       >
         Load Example Data
+      </button>
+      <button
+        onClick={openDeleteBulkModal}
+        disabled={tasksSelected < 1 ? true : false}
+        className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 bg-red-200 hover:bg-red-400 ${
+          tasksSelected < 1
+            ? "cursor-not-allowed brightness-200"
+            : "cursor-pointer"
+        }`}
+      >
+        Delete Multiple ({tasksSelected})
+      </button>
+      <button
+        onClick={openEditBulkModal}
+        disabled={tasksSelected < 1 ? true : false}
+        className={`font-bold border-b-1 border-slate-400 py-4 text-slate-600 bg-yellow-200 hover:bg-yellow-400 ${
+          tasksSelected < 1
+            ? "cursor-not-allowed brightness-200"
+            : "cursor-pointer"
+        }`}
+      >
+        Edit Multiple ({tasksSelected})
       </button>
       <button
         onClick={openAddNewColumnModal}

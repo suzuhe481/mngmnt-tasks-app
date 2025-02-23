@@ -52,7 +52,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   });
 
   // Stores some settings in localStorage
-  // Sotres currentIndex
+  // Sorts currentIndex
+  // INDEX STARTS AT 1
   const [settings, setSettings] = useState(() => {
     const storedSettings = localStorage.getItem("settings");
 
@@ -71,9 +72,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
-  // Stores id to be used as new tasks are added.
-  // INDEX STARTS AT 1
-  // const [currentIndex, setCurrentIndex] = useState<number>(1);
+  // Stores if all tasks have been selected.
+  const [allTasksSelected, setAllTasksSelected] = useState<boolean>(false);
 
   // Pagination variables
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -107,6 +107,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Adds task
     updatedTasksData.push(newTask);
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
     // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
@@ -124,6 +133,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return task.id === editTask.id ? { ...task, ...editTask } : task;
     });
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
@@ -135,10 +153,27 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return;
     }
 
-    // Updates the task at the id of editTask.id.
+    // Updates the task at the id of deleteTask.id.
     const updatedTasksData = tasksData.filter((task) => {
       return task.id !== deleteTask.id;
     });
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
@@ -505,6 +540,12 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Resets custom fields
     setCustomFields([]);
 
+    // Saving new index based on example data
+    const newSettings = settings;
+    newSettings.currentIndex = exampleData.length + 1;
+    setSettings(newSettings);
+    localStorage.setItem("settings", JSON.stringify(newSettings));
+
     // Paginate using current settings before storing as displayed.
     const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
     setDisplayedData(paginatedTasks);
@@ -601,6 +642,108 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     sortAndFilter(resetFilters);
   };
 
+  // Toggles every tasks's selected state between true/false
+  const toggleSelectedTasks = () => {
+    // Sets all task's selected to false.
+    if (allTasksSelected) {
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: false };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(false);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    } else {
+      // Sets all tasks's selected to true.
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: true };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(true);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    }
+  };
+
+  // Toggles a single task's selected property between true/false
+  const toggleTask = (selectedTaskID: number) => {
+    const updatedTasks = tasksData.map((task) => {
+      return task.id === selectedTaskID
+        ? { ...task, selected: !task.selected }
+        : task;
+    });
+
+    setTasksData(updatedTasks);
+    setAllTasksSelected(false);
+
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
+  // Deletes all selected tasks
+  const deleteBulkTasks = () => {
+    // Filters out selected tasks.
+    const updatedTasksData = tasksData
+      .filter((task) => {
+        return !task.selected;
+      })
+      // Sets all task's selected to false
+      .map((task) => {
+        return { ...task, selected: false };
+      });
+
+    setAllTasksSelected(false);
+
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+  };
+
+  // Edits all selected tasks on the given with the given value
+  const editBulkTasks = (column: string, newValue: string) => {
+    // Changing only the selected tasks to the the given newValue on the given column
+    // Unselects task
+    const updatedTasksData = tasksData.map((task) => {
+      return task.selected
+        ? { ...task, selected: false, [column]: newValue }
+        : task;
+    });
+
+    setAllTasksSelected(false);
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -635,6 +778,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         deleteColumn,
         customFields,
         resetFilters,
+        allTasksSelected,
+        toggleSelectedTasks,
+        toggleTask,
+        deleteBulkTasks,
+        editBulkTasks,
       }}
     >
       {children}

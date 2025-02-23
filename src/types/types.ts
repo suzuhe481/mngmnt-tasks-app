@@ -24,6 +24,7 @@ export interface ITask {
   status: string;
   priority: string;
   customFields?: Record<string, ICustomData>;
+  selected?: boolean;
 }
 
 export interface ISortedFilteredSettings {
