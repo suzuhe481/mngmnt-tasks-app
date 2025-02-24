@@ -4,17 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import EditTaskModal from "../../../UI/FormModals/EditTaskModal";
-import DeleteTaskModal from "../../../UI/FormModals/DeleteTaskModal";
+import EditTaskModal from "../../../../UI/FormModals/EditTaskModal";
+import DeleteTaskModal from "../../../../UI/FormModals/DeleteTaskModal";
 
 // Functions
 import { formatStatus, formatPriority } from "./functions/formatData";
 
 // Context
-import { DataContext } from "../../../context/DataContext";
+import { DataContext } from "../../../../context/DataContext";
 
 // Types
-import { ITask } from "../../../types/types";
+import { ITask } from "../../../../types/types";
 
 interface ITaskCard {
   task: ITask;

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, use } from "react";
 
-import FilterModal from "../../UI/SettingsModals/FilterModal";
+import FilterModal from "../../../UI/SettingsModals/FilterModal";
 
-import { DataContext } from "../../context/DataContext";
+import { DataContext } from "../../../context/DataContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";

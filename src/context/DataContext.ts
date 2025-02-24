@@ -36,6 +36,9 @@ interface IDataContextProps {
   toggleTask: (selectedTaskID: number) => void;
   deleteBulkTasks: () => void;
   editBulkTasks: (column: string, newValue: string) => void;
+
+  kanbanView: boolean;
+  toggleKanbanView: () => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(

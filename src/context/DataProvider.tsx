@@ -5,7 +5,7 @@ import { exampleData } from "../exampleData/data";
 import {
   formatStatus,
   formatPriority,
-} from "../components/TasksTable/components/functions/formatData";
+} from "../components/TableView/TasksTable/components/functions/formatData";
 
 // Types
 import {
@@ -71,6 +71,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Stores tasks to be displayed.
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
+
+  // Determines whether tasks are displayed in table view or kanban view.
+  const [kanbanView, setKanbanView] = useState<boolean>(false);
 
   // Stores if all tasks have been selected.
   const [allTasksSelected, setAllTasksSelected] = useState<boolean>(false);
@@ -744,6 +747,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
   };
 
+  // Toggles switching between table and kanban view
+  const toggleKanbanView = () => {
+    setKanbanView((prev) => !prev);
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -783,6 +791,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         toggleTask,
         deleteBulkTasks,
         editBulkTasks,
+        kanbanView,
+        toggleKanbanView,
       }}
     >
       {children}
