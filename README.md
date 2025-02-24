@@ -14,9 +14,10 @@ Want to see more features? Here's the beta version of MNGMNT which includes feat
 
 <details>
   <summary>Click here to see beta features.</summary>
-
-- Reset the filters back to their default.
-- Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
+  
+  ### 1.1.0
+  - Reset the filters back to their default.
+  - Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
 </details>
 
 ## Features
