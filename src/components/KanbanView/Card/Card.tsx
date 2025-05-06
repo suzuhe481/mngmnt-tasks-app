@@ -45,8 +45,7 @@ export const Card = (props: ICard) => {
       className={`${cardType === "card" ? cardStyles : overlayStyles}`}
     >
       <div>
-        <div>{task.id}</div>
-        <div>{task.title}</div>
+        <div className="text-xl font-bold">{task.title}</div>
       </div>
     </div>
   );
