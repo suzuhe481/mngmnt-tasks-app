@@ -31,11 +31,12 @@ const DeleteTaskModal = ({
   return (
     <div
       onClick={cancelAction}
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 w-full overflow-hidden"
+      className="fixed inset-0 flex items-center justify-center z-50 w-full overflow-hidden"
     >
+      <div className="absolute inset-0 bg-black opacity-50" />
       <div
         onClick={(event) => event.stopPropagation()}
-        className="animate-fadeInSlideUp bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto"
+        className="animate-fadeInSlideUp bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto z-10"
       >
         <div>
           <div className="font-bold text-2xl">{title}</div>
