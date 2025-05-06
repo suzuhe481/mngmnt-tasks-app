@@ -31,7 +31,7 @@ export const Card = (props: ICard) => {
 
   const cardStyles = `${
     isDragging ? "opacity-70 bg-gray-400" : ""
-  } bg-white p-2 w-full touch-none rounded-sm min-h-28 cursor-grab border-1 border-black shadow-xl`;
+  } bg-white p-2 w-full animate-all hover:scale-[103%] touch-none rounded-sm min-h-28 cursor-grab border-1 border-black shadow-xl`;
 
   const overlayStyles =
     "p-2 w-[90%] animate-pulse rotate-6 touch-none rounded-sm min-h-28 bg-white cursor-grab border-1 border-black shadow-xl";
