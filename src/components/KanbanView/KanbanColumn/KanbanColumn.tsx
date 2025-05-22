@@ -8,10 +8,7 @@ import {
 
 import { useDroppable } from "@dnd-kit/core";
 
-interface ITask {
-  id: number;
-  title: string;
-}
+import { ITask } from "../../../types/types";
 
 interface IKanbanColumn {
   title: string;
