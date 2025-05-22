@@ -13,6 +13,8 @@ import {
   ISortedFilteredSettings,
   ICustomField,
   ICustomData,
+  IKanbanTasks,
+  ITaskStatus,
 } from "../types/types";
 
 interface IDataProviderProps {
