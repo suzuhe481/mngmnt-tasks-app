@@ -1,14 +1,11 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-interface ITask {
-  id: number;
-  title: string;
-}
+import { ITask } from "../../../types/types";
 
 interface ICard {
   key: number;
-  task: ITask;
+  task: ITask | { id: number; title: string; status: string; priority: string };
   cardType: "card" | "overlay";
 }
 
