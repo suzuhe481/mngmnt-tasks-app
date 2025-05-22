@@ -29,6 +29,11 @@ export interface ITask {
   selected?: boolean;
 }
 
+export interface IKanbanTasks {
+  "Not Started": ITask[];
+  "In Progress": ITask[];
+  Completed: ITask[];
+}
 export interface ISortedFilteredSettings {
   sorted: boolean;
   sortedAscending: boolean;
