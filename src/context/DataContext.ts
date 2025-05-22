@@ -1,7 +1,12 @@
 import { createContext } from "react";
 
 // Types
-import { ITask, ISortedFilteredSettings, ICustomField } from "../types/types";
+import {
+  ITask,
+  IKanbanTasks,
+  ISortedFilteredSettings,
+  ICustomField,
+} from "../types/types";
 
 interface IDataContextProps {
   tasksData: ITask[] | [];
