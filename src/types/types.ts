@@ -16,6 +16,8 @@ export interface ICustomField {
   type: string;
 }
 
+export type ITaskStatus = "Not Started" | "In Progress" | "Completed";
+
 // Record is used so now the title of a field is a key in
 // the object, and it's value is ICustomData
 export interface ITask {
