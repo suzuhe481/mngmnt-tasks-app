@@ -44,6 +44,9 @@ interface IDataContextProps {
 
   kanbanView: boolean;
   toggleKanbanView: () => void;
+
+  kanbanTasksData: IKanbanTasks;
+  setKanbanTasksData: React.Dispatch<React.SetStateAction<IKanbanTasks>>;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(
