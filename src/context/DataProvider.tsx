@@ -263,6 +263,25 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData with deleted task
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id !== deleteTask.id) {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Updates sorting/filtering settings when a column is clicked.
