@@ -38,6 +38,26 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     }
   });
 
+  const [kanbanTasksData, setKanbanTasksData] = useState<IKanbanTasks>(() => {
+    const storedTasks = localStorage.getItem("kanbanTasksData");
+
+    // Get tasks from localStorage
+    if (storedTasks) {
+      return JSON.parse(storedTasks);
+    }
+    // If no data, create empty ITask[]
+    else {
+      const emptyKanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      localStorage.setItem("kanbanTasksData", JSON.stringify(emptyKanbanTasks));
+      return [];
+    }
+  });
+
   // Gets and sets schema for customFields in localStorage
   const [customFields, setCustomFields] = useState<ICustomField[]>(() => {
     const storedCustomFields = localStorage.getItem("customFields");
