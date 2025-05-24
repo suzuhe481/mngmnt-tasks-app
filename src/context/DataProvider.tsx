@@ -279,9 +279,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     const sortedAsc = newSettings.sortedAscending;
 
     const statusOrder: { [key: string]: number } = {
-      not_started: 1,
-      in_progress: 2,
-      completed: 3,
+      "Not Started": 1,
+      "In Progress": 2,
+      Completed: 3,
     };
 
     const sortedByStatus = sortedAndFilteredTasks.sort((a, b) => {
