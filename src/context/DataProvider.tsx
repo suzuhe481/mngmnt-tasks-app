@@ -560,14 +560,55 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Imports example data
   const importExampleData = () => {
-    setTasksData(exampleData);
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      console.log(status);
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
+    const mappingTasksForKanban = (tasks: ITask[]) => {
+      const kanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      tasks.forEach((task: ITask) => {
+        kanbanTasks[mapStatusToITaskStatus(task.status)].push(task);
+      });
+
+      return kanbanTasks;
+    };
+
+    const mappedExampleData = exampleData.map((task) => ({
+      ...task,
+      status: mapStatusToITaskStatus(task.status),
+    }));
+
+    setTasksData(mappedExampleData);
+
+    const mappedKanbanTasks = mappingTasksForKanban(mappedExampleData);
+
+    setKanbanTasksData(mappedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(mappedKanbanTasks));
 
     // Resets custom fields
     setCustomFields([]);
 
     // Saving new index based on example data
     const newSettings = settings;
-    newSettings.currentIndex = exampleData.length + 1;
+    newSettings.currentIndex = mappedExampleData.length + 1;
     setSettings(newSettings);
     localStorage.setItem("settings", JSON.stringify(newSettings));
 
