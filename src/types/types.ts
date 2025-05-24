@@ -34,6 +34,7 @@ export interface IKanbanTasks {
   "In Progress": ITask[];
   Completed: ITask[];
 }
+
 export interface ISortedFilteredSettings {
   sorted: boolean;
   sortedAscending: boolean;
