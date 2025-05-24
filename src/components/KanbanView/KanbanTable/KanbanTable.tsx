@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, use } from "react";
 import { KanbanColumn } from "../KanbanColumn/KanbanColumn";
 import { Card } from "../Card/Card";
+
+import { DataContext } from "../../../context/DataContext";
 
 import {
   DndContext,
@@ -19,27 +21,17 @@ import {
 
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-import { IKanbanTasks } from "../../../types/types";
+import { IKanbanTasks, ITaskStatus } from "../../../types/types";
 
 export const KanbanTable = () => {
-  // Storing tasks in state.
-  const [tasks, setTasks] = useState<IKanbanTasks>({
-    "Not Started": [
-      { id: 1, title: "task 1" },
-      { id: 2, title: "somethin to do" },
-      { id: 3, title: "experiment" },
-    ],
-    "In Progress": [
-      { id: 4, title: "testing" },
-      { id: 5, title: "task 5" },
-      { id: 6, title: "another" },
-    ],
-    Completed: [
-      { id: 7, title: "new thing" },
-      { id: 8, title: "thing" },
-      { id: 9, title: "old thing" },
-    ],
-  });
+  const context = use(DataContext);
+
+  if (!context) {
+    throw new Error("DataContext is not provided");
+  }
+
+  const { kanbanTasksData, setKanbanTasksData, tasksData, setTasksData } =
+    context;
 
   // Stores the id of the task card being dragged and its column
   const [draggedTask, setDraggedTask] = useState<number | null>(null);
@@ -55,21 +47,21 @@ export const KanbanTable = () => {
 
   // Given the id of a task, return the column the task belongs to.
   const findContainer = (id: UniqueIdentifier) => {
-    if (id in tasks) {
+    if (id in kanbanTasksData) {
       return id;
     }
 
-    return Object.keys(tasks).find((key) =>
-      tasks[key as keyof IKanbanTasks].some((task) => task.id === Number(id))
+    return Object.keys(kanbanTasksData).find((key) =>
+      kanbanTasksData[key as keyof IKanbanTasks].some(
+        (task) => task.id === Number(id)
+      )
     );
   };
 
   // Returns a task based in the given id.
   const findTaskById = (id: number) => {
-    console.log(id);
-
-    for (const column in tasks) {
-      const task = tasks[column as keyof IKanbanTasks].find(
+    for (const column in kanbanTasksData) {
+      const task = kanbanTasksData[column as keyof IKanbanTasks].find(
         (task) => task.id === id
       );
 
@@ -78,7 +70,7 @@ export const KanbanTable = () => {
       }
     }
 
-    return { id: -1, title: "" };
+    return { id: -1, title: "", status: "", priority: "" };
   };
 
   // Drag start
@@ -99,7 +91,7 @@ export const KanbanTable = () => {
     if (!over) return;
     const overId = over.id;
 
-    if (overId === null || active.id in tasks) {
+    if (overId === null || active.id in kanbanTasksData) {
       return;
     }
 
@@ -115,19 +107,19 @@ export const KanbanTable = () => {
     // Task is switching columns
     if (activeContainer !== overContainer) {
       // Gets the array of tasks for the column being switched to
-      const overItems = tasks[overContainer as keyof IKanbanTasks];
+      const overItems = kanbanTasksData[overContainer as keyof IKanbanTasks];
 
       // Get indices for task being dragged(active) and task underneath(over).
-      const activeIndex = tasks[
+      const activeIndex = kanbanTasksData[
         activeContainer as keyof IKanbanTasks
       ].findIndex((task) => task.id === Number(active.id));
-      const overIndex = tasks[overContainer as keyof IKanbanTasks].findIndex(
-        (task) => task.id === Number(overId)
-      );
+      const overIndex = kanbanTasksData[
+        overContainer as keyof IKanbanTasks
+      ].findIndex((task) => task.id === Number(overId));
 
       // Determines the new index of where the task should be placed depending on it's position in the array.
       let newIndex: number;
-      if (overId in tasks) {
+      if (overId in kanbanTasksData) {
         newIndex = overItems.length + 1;
       } else {
         const isBelowLastItem = over && overIndex === overItems.length - 1;
@@ -139,23 +131,37 @@ export const KanbanTable = () => {
 
       // Updates dragged task to new column
       const updatedTasks = {
-        ...tasks,
+        ...kanbanTasksData,
         [activeContainer]: [
-          ...tasks[activeContainer as keyof IKanbanTasks].filter(
+          ...kanbanTasksData[activeContainer as keyof IKanbanTasks].filter(
             (task) => task.id !== active.id
           ),
         ],
         [overContainer]: [
-          ...tasks[overContainer as keyof IKanbanTasks].slice(0, newIndex),
-          tasks[activeContainer as keyof IKanbanTasks][activeIndex],
-          ...tasks[overContainer as keyof IKanbanTasks].slice(
+          ...kanbanTasksData[overContainer as keyof IKanbanTasks].slice(
+            0,
+            newIndex
+          ),
+          kanbanTasksData[activeContainer as keyof IKanbanTasks][activeIndex],
+          ...kanbanTasksData[overContainer as keyof IKanbanTasks].slice(
             newIndex,
-            tasks[overContainer as keyof IKanbanTasks].length
+            kanbanTasksData[overContainer as keyof IKanbanTasks].length
           ),
         ],
       };
 
-      setTasks(updatedTasks);
+      // Saves tasks for kanbanData in state and localStorage
+      setKanbanTasksData(updatedTasks);
+      localStorage.setItem("kanbanTasksData", JSON.stringify(updatedTasks));
+
+      // Updates the task's status for tasksData in state and localstorage
+      const updatedTasksData = tasksData.map((task) => {
+        return task.id === active.id
+          ? { ...task, status: overContainer as ITaskStatus }
+          : task;
+      });
+      setTasksData(updatedTasksData);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
     }
   };
 
@@ -176,34 +182,44 @@ export const KanbanTable = () => {
     }
 
     // Get indices for task being dragged(active) and task underneath(over).
-    const activeIndex = tasks[activeContainer as keyof IKanbanTasks].findIndex(
-      (task) => task.id === Number(active.id)
-    );
-    const overIndex = tasks[overContainer as keyof IKanbanTasks].findIndex(
-      (task) => task.id === Number(overId)
-    );
+    const activeIndex = kanbanTasksData[
+      activeContainer as keyof IKanbanTasks
+    ].findIndex((task) => task.id === Number(active.id));
+    const overIndex = kanbanTasksData[
+      overContainer as keyof IKanbanTasks
+    ].findIndex((task) => task.id === Number(overId));
 
     // Updates and sets tasks if task is dragged to a new spot.
     if (activeIndex !== overIndex) {
       // Updates tasks
       const updatedTasks = {
-        ...tasks,
+        ...kanbanTasksData,
         [overContainer]: arrayMove(
-          tasks[overContainer as keyof IKanbanTasks],
+          kanbanTasksData[overContainer as keyof IKanbanTasks],
           activeIndex,
           overIndex
         ),
       };
 
-      // Sets tasks
-      setTasks(updatedTasks);
+      // Saves tasks for kanbanData in state and localStorage
+      setKanbanTasksData(updatedTasks);
+      localStorage.setItem("kanbanTasksData", JSON.stringify(updatedTasks));
+
+      // Updates the task's status for tasksData in state and localstorage
+      const updatedTasksData = tasksData.map((task) => {
+        return task.id === active.id
+          ? { ...task, status: overContainer as ITaskStatus }
+          : task;
+      });
+      setTasksData(updatedTasksData);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
     }
 
     setDraggedTask(null);
   }
 
   return (
-    <div className="flex flex-row justify-center min-w-screen">
+    <div className="flex flex-row px-4 overflow-x-auto min-w-full">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -211,10 +227,16 @@ export const KanbanTable = () => {
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
       >
-        <div className="flex flex-row gap-4 w-[90vw] justify-center items-start">
-          <KanbanColumn title="Not Started" tasks={tasks["Not Started"]} />
-          <KanbanColumn title="In Progress" tasks={tasks["In Progress"]} />
-          <KanbanColumn title="Completed" tasks={tasks.Completed} />
+        <div className="flex flex-row gap-8">
+          <KanbanColumn
+            title="Not Started"
+            tasks={kanbanTasksData["Not Started"]}
+          />
+          <KanbanColumn
+            title="In Progress"
+            tasks={kanbanTasksData["In Progress"]}
+          />
+          <KanbanColumn title="Completed" tasks={kanbanTasksData.Completed} />
           <DragOverlay>
             {draggedTask ? (
               <Card
