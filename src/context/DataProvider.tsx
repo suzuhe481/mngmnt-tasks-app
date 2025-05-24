@@ -201,8 +201,35 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setDisplayedData(paginatedTasks);
 
+    // Saves tasks for table view
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id === editTask.id) {
+          // If status changed, push to the new status column
+          updatedKanbanTasks[editTask.status].push({
+            ...task,
+            ...editTask,
+          });
+        } else {
+          // Keep original task
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
