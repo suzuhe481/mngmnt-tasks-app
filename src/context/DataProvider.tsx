@@ -830,6 +830,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     <DataContext.Provider
       value={{
         tasksData,
+        kanbanTasksData,
+        setKanbanTasksData,
         displayedData,
         addTask,
         editTask,
