@@ -562,7 +562,6 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Imports example data
   const importExampleData = () => {
     const mapStatusToITaskStatus = (status: string): ITaskStatus => {
-      console.log(status);
       switch (status) {
         case "not_started":
         case "Not Started":
