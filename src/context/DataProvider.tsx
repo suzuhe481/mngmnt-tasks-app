@@ -55,7 +55,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       };
 
       localStorage.setItem("kanbanTasksData", JSON.stringify(emptyKanbanTasks));
-      return [];
+      return emptyKanbanTasks;
     }
   });
 
