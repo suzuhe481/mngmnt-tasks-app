@@ -18,9 +18,11 @@ interface IKanbanColumn {
 export const KanbanColumn = ({ title, tasks }: IKanbanColumn) => {
   const { setNodeRef } = useDroppable({ id: title });
 
+  const tasksToRender = tasks ? tasks : [];
+
   return (
     <SortableContext
-      items={tasks.length > 0 ? tasks : ["placeholder"]}
+      items={tasksToRender.length > 0 ? tasksToRender : ["placeholder"]}
       id={title}
       strategy={verticalListSortingStrategy}
     >
@@ -29,7 +31,7 @@ export const KanbanColumn = ({ title, tasks }: IKanbanColumn) => {
         className="flex flex-col justify-start items-center gap-2 w-[500px] my-4 px-4 py-2 min-h-[200px] bg-gray-300 rounded-2xl"
       >
         <div className=" w-full text-left font-bold">{title}</div>
-        {tasks.map((task) => {
+        {tasksToRender.map((task) => {
           if (!task) return;
           return <Card key={task.id} task={task} cardType="card" />;
         })}
