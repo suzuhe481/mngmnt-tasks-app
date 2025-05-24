@@ -29,6 +29,8 @@ export interface ITask {
   selected?: boolean;
 }
 
+export type INewTask = Omit<ITask, "id">;
+
 export interface IKanbanTasks {
   "Not Started": ITask[];
   "In Progress": ITask[];
