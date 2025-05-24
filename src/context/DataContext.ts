@@ -3,6 +3,7 @@ import { createContext } from "react";
 // Types
 import {
   ITask,
+  INewTask,
   IKanbanTasks,
   ISortedFilteredSettings,
   ICustomField,
@@ -10,10 +11,11 @@ import {
 
 interface IDataContextProps {
   tasksData: ITask[] | [];
+  setTasksData: React.Dispatch<React.SetStateAction<ITask[]>>;
   displayedData: ITask[] | [];
   customFields: ICustomField[];
 
-  addTask: (newTask: ITask) => void;
+  addTask: (newTask: INewTask) => void;
   editTask: (editedTask: ITask) => void;
   deleteTask: (deleteTask: ITask) => void;
 
