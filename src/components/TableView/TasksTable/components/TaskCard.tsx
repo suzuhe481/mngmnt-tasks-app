@@ -8,7 +8,7 @@ import EditTaskModal from "../../../../UI/FormModals/EditTaskModal";
 import DeleteTaskModal from "../../../../UI/FormModals/DeleteTaskModal";
 
 // Functions
-import { formatStatus, formatPriority } from "./functions/formatData";
+import { formatPriority } from "./functions/formatData";
 
 // Context
 import { DataContext } from "../../../../context/DataContext";
@@ -36,7 +36,7 @@ export const TaskCard = ({ task }: ITaskCard) => {
   const { editTask, deleteTask, customFields, toggleTask } = context;
 
   const title = task.title;
-  const status = formatStatus(task.status);
+  const status = task.status;
   const priority = formatPriority(task.priority);
 
   // Title for Edit Task modal.
