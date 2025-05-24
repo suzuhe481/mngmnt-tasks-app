@@ -19,16 +19,7 @@ import {
 
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-interface ITask {
-  id: number;
-  title: string;
-}
-
-interface IKanbanTasks {
-  "Not Started": ITask[];
-  "In Progress": ITask[];
-  Completed: ITask[];
-}
+import { IKanbanTasks } from "../../../types/types";
 
 export const KanbanTable = () => {
   // Storing tasks in state.
