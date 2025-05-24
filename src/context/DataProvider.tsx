@@ -841,6 +841,14 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         return { ...task, selected: false };
       });
 
+    const deletedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
+
     setAllTasksSelected(false);
 
     // Resets currentIndex to 1 if all tasks were deleted
@@ -862,6 +870,21 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      updatedKanbanTasks[status as ITaskStatus] = tasks.filter(
+        (task: ITask) => !deletedTaskIds.includes(task.id)
+      );
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits all selected tasks on the given with the given value
