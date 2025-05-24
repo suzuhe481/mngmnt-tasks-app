@@ -897,6 +897,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         : task;
     });
 
+    // IDs of tasks that will be edited
+    const editedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
+
     setAllTasksSelected(false);
 
     // Paginate using current settings before storing as displayed.
@@ -910,6 +919,36 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (editedTaskIds.includes(task.id)) {
+          const updatedTask = {
+            ...task,
+            selected: false,
+            [column]: newValue,
+          };
+
+          const targetStatus =
+            column === "status"
+              ? (newValue as ITaskStatus)
+              : (task.status as ITaskStatus);
+
+          updatedKanbanTasks[targetStatus].push(updatedTask);
+        } else {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Toggles switching between table and kanban view
