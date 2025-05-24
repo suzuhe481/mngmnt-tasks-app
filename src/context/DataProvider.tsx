@@ -119,8 +119,29 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     });
 
   // Adds a new task to tasksData.
-  const addTask = (newTask: ITask) => {
+  const addTask = (task: INewTask) => {
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
     // Adding id to task, increment id, save to state and localstorage
+    const newTask: ITask = {
+      id: settings.currentIndex,
+      ...task,
+    };
+
     newTask.id = settings.currentIndex;
     const newSettings = settings;
     newSettings.currentIndex++;
@@ -140,11 +161,23 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       pageSize
     );
 
+    newTask.status = mapStatusToITaskStatus(newTask.status);
+
     setDisplayedData(paginatedTasks);
+
+    // Creates shallow copy of kanbanTasksData
+    const updatedKanbanTasks: IKanbanTasks = { ...kanbanTasksData };
+
+    // Adds task
+    updatedKanbanTasks[newTask.status].push(newTask);
 
     // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
