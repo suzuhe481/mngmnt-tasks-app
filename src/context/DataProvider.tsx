@@ -10,6 +10,7 @@ import {
 // Types
 import {
   ITask,
+  INewTask,
   ISortedFilteredSettings,
   ICustomField,
   ICustomData,
