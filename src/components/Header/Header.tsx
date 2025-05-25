@@ -1,6 +1,6 @@
 import { use } from "react";
 
-import { DataContext } from "../../../context/DataContext";
+import { DataContext } from "../../context/DataContext";
 
 export const Header = () => {
   const context = use(DataContext);
