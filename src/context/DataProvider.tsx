@@ -5,14 +5,17 @@ import { exampleData } from "../exampleData/data";
 import {
   formatStatus,
   formatPriority,
-} from "../components/TasksTable/components/functions/formatData";
+} from "../components/TableView/TasksTable/components/functions/formatData";
 
 // Types
 import {
   ITask,
+  INewTask,
   ISortedFilteredSettings,
   ICustomField,
   ICustomData,
+  IKanbanTasks,
+  ITaskStatus,
 } from "../types/types";
 
 interface IDataProviderProps {
@@ -33,6 +36,26 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     else {
       localStorage.setItem("tasksData", JSON.stringify([]));
       return [];
+    }
+  });
+
+  const [kanbanTasksData, setKanbanTasksData] = useState<IKanbanTasks>(() => {
+    const storedTasks = localStorage.getItem("kanbanTasksData");
+
+    // Get tasks from localStorage
+    if (storedTasks) {
+      return JSON.parse(storedTasks);
+    }
+    // If no data, create empty ITask[]
+    else {
+      const emptyKanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      localStorage.setItem("kanbanTasksData", JSON.stringify(emptyKanbanTasks));
+      return emptyKanbanTasks;
     }
   });
 
@@ -72,6 +95,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
+  // Determines whether tasks are displayed in table view or kanban view.
+  const [kanbanView, setKanbanView] = useState<boolean>(false);
+
   // Stores if all tasks have been selected.
   const [allTasksSelected, setAllTasksSelected] = useState<boolean>(false);
 
@@ -93,8 +119,29 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     });
 
   // Adds a new task to tasksData.
-  const addTask = (newTask: ITask) => {
+  const addTask = (task: INewTask) => {
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
     // Adding id to task, increment id, save to state and localstorage
+    const newTask: ITask = {
+      id: settings.currentIndex,
+      ...task,
+    };
+
     newTask.id = settings.currentIndex;
     const newSettings = settings;
     newSettings.currentIndex++;
@@ -114,11 +161,23 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       pageSize
     );
 
+    newTask.status = mapStatusToITaskStatus(newTask.status);
+
     setDisplayedData(paginatedTasks);
+
+    // Creates shallow copy of kanbanTasksData
+    const updatedKanbanTasks: IKanbanTasks = { ...kanbanTasksData };
+
+    // Adds task
+    updatedKanbanTasks[newTask.status].push(newTask);
 
     // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
@@ -142,8 +201,35 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setDisplayedData(paginatedTasks);
 
+    // Saves tasks for table view
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id === editTask.id) {
+          // If status changed, push to the new status column
+          updatedKanbanTasks[editTask.status].push({
+            ...task,
+            ...editTask,
+          });
+        } else {
+          // Keep original task
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
@@ -177,6 +263,25 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData with deleted task
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id !== deleteTask.id) {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Updates sorting/filtering settings when a column is clicked.
@@ -253,9 +358,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     const sortedAsc = newSettings.sortedAscending;
 
     const statusOrder: { [key: string]: number } = {
-      not_started: 1,
-      in_progress: 2,
-      completed: 3,
+      "Not Started": 1,
+      "In Progress": 2,
+      Completed: 3,
     };
 
     const sortedByStatus = sortedAndFilteredTasks.sort((a, b) => {
@@ -535,14 +640,54 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Imports example data
   const importExampleData = () => {
-    setTasksData(exampleData);
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
+    const mappingTasksForKanban = (tasks: ITask[]) => {
+      const kanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      tasks.forEach((task: ITask) => {
+        kanbanTasks[mapStatusToITaskStatus(task.status)].push(task);
+      });
+
+      return kanbanTasks;
+    };
+
+    const mappedExampleData = exampleData.map((task) => ({
+      ...task,
+      status: mapStatusToITaskStatus(task.status),
+    }));
+
+    setTasksData(mappedExampleData);
+
+    const mappedKanbanTasks = mappingTasksForKanban(mappedExampleData);
+
+    setKanbanTasksData(mappedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(mappedKanbanTasks));
 
     // Resets custom fields
     setCustomFields([]);
 
     // Saving new index based on example data
     const newSettings = settings;
-    newSettings.currentIndex = exampleData.length + 1;
+    newSettings.currentIndex = mappedExampleData.length + 1;
     setSettings(newSettings);
     localStorage.setItem("settings", JSON.stringify(newSettings));
 
@@ -696,6 +841,14 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         return { ...task, selected: false };
       });
 
+    const deletedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
+
     setAllTasksSelected(false);
 
     // Resets currentIndex to 1 if all tasks were deleted
@@ -717,6 +870,21 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      updatedKanbanTasks[status as ITaskStatus] = tasks.filter(
+        (task: ITask) => !deletedTaskIds.includes(task.id)
+      );
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits all selected tasks on the given with the given value
@@ -728,6 +896,15 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         ? { ...task, selected: false, [column]: newValue }
         : task;
     });
+
+    // IDs of tasks that will be edited
+    const editedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
 
     setAllTasksSelected(false);
 
@@ -742,6 +919,41 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (editedTaskIds.includes(task.id)) {
+          const updatedTask = {
+            ...task,
+            selected: false,
+            [column]: newValue,
+          };
+
+          const targetStatus =
+            column === "status"
+              ? (newValue as ITaskStatus)
+              : (task.status as ITaskStatus);
+
+          updatedKanbanTasks[targetStatus].push(updatedTask);
+        } else {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
+  };
+
+  // Toggles switching between table and kanban view
+  const toggleKanbanView = () => {
+    setKanbanView((prev) => !prev);
   };
 
   // useEffect to sync tasksData with localStorage
@@ -759,6 +971,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     <DataContext.Provider
       value={{
         tasksData,
+        setTasksData,
+        kanbanTasksData,
+        setKanbanTasksData,
         displayedData,
         addTask,
         editTask,
@@ -783,6 +998,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         toggleTask,
         deleteBulkTasks,
         editBulkTasks,
+        kanbanView,
+        toggleKanbanView,
       }}
     >
       {children}

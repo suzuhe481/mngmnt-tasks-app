@@ -1,11 +1,11 @@
 import { useState, use, useRef, useEffect } from "react";
 
-import AddTaskModal from "../../UI/FormModals/AddTaskModal";
-import ActionModal from "../../UI/SettingsModals/ActionModal";
+import AddTaskModal from "../../../UI/FormModals/AddTaskModal";
+import ActionModal from "../../../UI/SettingsModals/ActionModal";
 
-import { ITask } from "../../types/types";
+import { INewTask } from "../../../types/types";
 
-import { DataContext } from "../../context/DataContext";
+import { DataContext } from "../../../context/DataContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
@@ -33,7 +33,7 @@ export const Actions = () => {
   };
 
   // Confirms adding task
-  const confirmAddTask = (newTask: ITask) => {
+  const confirmAddTask = (newTask: INewTask) => {
     addTask(newTask);
   };
 

@@ -1,5 +1,5 @@
 import { useState, use, useEffect } from "react";
-import { ITask } from "../../types/types";
+import { INewTask } from "../../types/types";
 
 import { CustomInputs } from "./CustomInputs";
 
@@ -8,7 +8,7 @@ import { DataContext } from "../../context/DataContext";
 interface IModalProps {
   title: string;
   description?: string;
-  confirmAction: (newTask: ITask) => void;
+  confirmAction: (newTask: INewTask) => void;
   cancelAction: () => void;
 }
 
@@ -34,9 +34,9 @@ const AddTaskModal = ({
   confirmAction,
   cancelAction,
 }: IModalProps) => {
-  const [newTask, setNewTask] = useState<ITask>({
+  const [newTask, setNewTask] = useState<INewTask>({
     title: "",
-    status: "not_started",
+    status: "Not Started",
     priority: "none",
     customFields: {},
   });
@@ -164,9 +164,9 @@ const AddTaskModal = ({
               onChange={handleTaskChange}
               className="border-2 border-slate-400 py-2 focus:outline-none focus:border-[#75C1FF] focus:shadow-[0_0_0_2px_#B3E0FF]"
             >
-              <option value="not_started">Not Started</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
 

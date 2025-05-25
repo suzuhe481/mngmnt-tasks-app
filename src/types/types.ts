@@ -16,15 +16,25 @@ export interface ICustomField {
   type: string;
 }
 
+export type ITaskStatus = "Not Started" | "In Progress" | "Completed";
+
 // Record is used so now the title of a field is a key in
 // the object, and it's value is ICustomData
 export interface ITask {
-  id?: number;
+  id: number;
   title: string;
-  status: string;
+  status: ITaskStatus;
   priority: string;
   customFields?: Record<string, ICustomData>;
   selected?: boolean;
+}
+
+export type INewTask = Omit<ITask, "id">;
+
+export interface IKanbanTasks {
+  "Not Started": ITask[];
+  "In Progress": ITask[];
+  Completed: ITask[];
 }
 
 export interface ISortedFilteredSettings {
