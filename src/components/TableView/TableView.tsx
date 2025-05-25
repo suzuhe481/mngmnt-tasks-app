@@ -1,4 +1,4 @@
-import { Header } from "./Header/Header";
+import { Header } from "../Header/Header";
 import { Actions } from "./Actions/Actions";
 import { Search } from "./Search/Search";
 import { TasksTable } from "./TasksTable/TasksTable";
