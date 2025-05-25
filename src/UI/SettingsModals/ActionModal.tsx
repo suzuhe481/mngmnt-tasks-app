@@ -23,6 +23,8 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
   const [deleteBulkModalOpen, setDeleteBulkModalOpen] =
     useState<boolean>(false);
   const [editBulkModalOpen, setEditBulkModalOpen] = useState<boolean>(false);
+  const [deleteDataModalOpen, setDeleteDataModalOpen] =
+    useState<boolean>(false);
 
   const context = use(DataContext);
 
@@ -41,6 +43,7 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     deleteBulkTasks,
     editBulkTasks,
     tasksData,
+    deleteAllData,
   } = context;
 
   // Title and Description for Import Data modal.
@@ -171,6 +174,29 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
     cancelAction();
   };
 
+  // Title and Description for Import Data modal.
+  const DeleteDataTitle = "DELETE ALL TASKS AND DATA?";
+  const DeleteDataDesc =
+    "Are you sure? This will PERMANENTLY DELETE ALL of your TASKS and STORED SETTINGS.";
+
+  // Opens Import Data Modal
+  const openDeleteDataModal = () => {
+    setDeleteDataModalOpen(true);
+  };
+
+  // Closes Import Data Modal
+  const closeDeleteDataModal = () => {
+    setDeleteDataModalOpen(false);
+  };
+
+  // Deletes all data
+  const confirmDeleteAllData = () => {
+    deleteAllData();
+
+    // Closes Action modal
+    cancelAction();
+  };
+
   return (
     <div
       ref={ref}
@@ -215,6 +241,14 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
           description={EditBulkDesc}
           confirmAction={confirmEditBulk}
           cancelAction={closeEditBulkModal}
+        />
+      ) : null}
+      {deleteDataModalOpen ? (
+        <NotificationModal
+          title={DeleteDataTitle}
+          description={DeleteDataDesc}
+          confirmAction={confirmDeleteAllData}
+          cancelAction={closeDeleteDataModal}
         />
       ) : null}
       <button
@@ -263,6 +297,12 @@ const ActionModal = ({ ref, cancelAction }: IFilterModalProps) => {
         }`}
       >
         Remove Column
+      </button>
+      <button
+        onClick={openDeleteDataModal}
+        className={`font-bold cursor-pointer border-b-1 border-slate-400 py-4 text-black bg-red-400 hover:bg-red-600`}
+      >
+        DELETE ALL DATA!
       </button>
     </div>
   );

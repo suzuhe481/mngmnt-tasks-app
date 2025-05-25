@@ -951,6 +951,23 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     setKanbanView((prev) => !prev);
   };
 
+  // Deletes all data from localStorage and resets state.
+  const deleteAllData = () => {
+    setTasksData([]);
+    setKanbanTasksData({
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    });
+    setSettings({ currentIndex: 1 });
+    setCustomFields([]);
+
+    localStorage.removeItem("tasksData");
+    localStorage.removeItem("kanbanTasksData");
+    localStorage.removeItem("settings");
+    localStorage.removeItem("customFields");
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -959,8 +976,10 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       // Paginate using current settings before storing as displayed.
       const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
       setDisplayedData(paginatedTasks);
+    } else {
+      setDisplayedData([]);
     }
-  }, [tasksData, currentPage, pageSize]);
+  }, [tasksData, kanbanTasksData, currentPage, pageSize, settings]);
 
   return (
     <DataContext.Provider
@@ -995,6 +1014,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         editBulkTasks,
         kanbanView,
         toggleKanbanView,
+        deleteAllData,
       }}
     >
       {children}
