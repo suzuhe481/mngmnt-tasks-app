@@ -49,6 +49,8 @@ interface IDataContextProps {
 
   kanbanTasksData: IKanbanTasks;
   setKanbanTasksData: React.Dispatch<React.SetStateAction<IKanbanTasks>>;
+
+  deleteAllData: () => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(
