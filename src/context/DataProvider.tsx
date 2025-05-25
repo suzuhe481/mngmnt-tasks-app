@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
 import { exampleData } from "../exampleData/data";
 
-import {
-  formatStatus,
-  formatPriority,
-} from "../components/TableView/TasksTable/components/functions/formatData";
+import { formatPriority } from "../components/TableView/TasksTable/components/functions/formatData";
 
 // Types
 import {
@@ -534,9 +531,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     const filteredTasks = sortedAndFilteredTasks.filter((task) => {
       const titleMatch = task.title.toLowerCase().includes(filterText);
-      const statusMatch = formatStatus(task.status)
-        .toLowerCase()
-        .includes(filterText);
+      const statusMatch = task.status.toLowerCase().includes(filterText);
       const priorityMatch = formatPriority(task.priority)
         .toLowerCase()
         .includes(filterText);
