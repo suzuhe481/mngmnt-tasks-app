@@ -7,10 +7,12 @@ interface ICard {
   key: number;
   task: ITask | { id: number; title: string; status: string; priority: string };
   cardType: "card" | "overlay";
+  openEditTaskModal?: () => void;
+  setTaskToEdit?: React.Dispatch<React.SetStateAction<ITask | null>>;
 }
 
 export const Card = (props: ICard) => {
-  const { task, cardType } = props;
+  const { task, cardType, openEditTaskModal, setTaskToEdit } = props;
 
   const {
     attributes,
@@ -24,6 +26,30 @@ export const Card = (props: ICard) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  // Checks if the given task is an ITask
+  function isITask(
+    task: { id: number; title: string; status: string; priority: string } | null
+  ): task is ITask {
+    return (
+      task != null &&
+      typeof task.id === "number" &&
+      typeof task.title === "string" &&
+      ["Not Started", "In Progress", "Completed"].includes(task.status) &&
+      typeof task.priority === "string"
+    );
+  }
+
+  // Confirms opening the edit task modal.
+  // Checks if the openEditTaskModal and setTaskToEdit functions exist and if the task is an ITask.
+  const confirmOpenEditTaskModal = () => {
+    if (!openEditTaskModal || !setTaskToEdit || !isITask(task)) {
+      return;
+    }
+
+    setTaskToEdit(task);
+    openEditTaskModal();
   };
 
   const cardStyles = `${
@@ -40,6 +66,7 @@ export const Card = (props: ICard) => {
       {...attributes}
       {...listeners}
       className={`${cardType === "card" ? cardStyles : overlayStyles}`}
+      onClick={confirmOpenEditTaskModal}
     >
       <div>
         <div className="text-xl font-bold">{task.title}</div>
