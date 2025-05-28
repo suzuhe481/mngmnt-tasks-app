@@ -1,5 +1,5 @@
 import { useState, use, useEffect } from "react";
-import { INewTask } from "../../types/types";
+import { INewTask, ITaskStatus } from "../../types/types";
 
 import { CustomInputs } from "./CustomInputs";
 
@@ -10,6 +10,7 @@ interface IModalProps {
   description?: string;
   confirmAction: (newTask: INewTask) => void;
   cancelAction: () => void;
+  columnToAddTask?: string;
 }
 
 // Used in reduce
@@ -33,10 +34,11 @@ const AddTaskModal = ({
   description = "",
   confirmAction,
   cancelAction,
+  columnToAddTask,
 }: IModalProps) => {
   const [newTask, setNewTask] = useState<INewTask>({
     title: "",
-    status: "Not Started",
+    status: (columnToAddTask as ITaskStatus) || "Not Started",
     priority: "none",
     customFields: {},
   });
@@ -162,6 +164,7 @@ const AddTaskModal = ({
               id="status"
               required
               onChange={handleTaskChange}
+              value={columnToAddTask || "Not Started"}
               className="border-2 border-slate-400 py-2 focus:outline-none focus:border-[#75C1FF] focus:shadow-[0_0_0_2px_#B3E0FF]"
             >
               <option value="Not Started">Not Started</option>
