@@ -42,17 +42,17 @@ export const TaskCard = ({ task }: ITaskCard) => {
   // Title for Edit Task modal.
   const EditTaskTitle = "Edit Task";
 
-  // Opens Add Task Modal
+  // Opens Edit Task Modal
   const openEditTaskModal = () => {
     setEditTaskModalOpen(true);
   };
 
-  // Closes Add Task Modal
+  // Closes Edit Task Modal
   const closeEditTaskModal = () => {
     setEditTaskModalOpen(false);
   };
 
-  // Confirms adding task
+  // Confirms editing a task
   const confirmEditTask = (editedTask: ITask) => {
     editTask(editedTask);
   };
@@ -62,17 +62,17 @@ export const TaskCard = ({ task }: ITaskCard) => {
   const DeleteTaskDescription =
     "Are you sure you want to PERMANENTELY delete this task? ";
 
-  // Opens Add Task Modal
+  // Opens Delete Task Modal
   const openDeleteTaskModal = () => {
     setDeleteTaskModalOpen(true);
   };
 
-  // Closes Add Task Modal
+  // Closes Delete Task Modal
   const closeDeleteTaskModal = () => {
     setDeleteTaskModalOpen(false);
   };
 
-  // Confirms adding task
+  // Confirms deleting a task
   const confirmDeleteTask = (deletedTask: ITask) => {
     deleteTask(deletedTask);
   };
