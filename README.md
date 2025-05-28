@@ -6,30 +6,19 @@ The clever origin of the name is that it's just the word "Management" without th
 
 [Live Demo](https://mngmnt.hectorsuazo.com)
 
-## Beta Version
-
-Want to see more features? Here's the beta version of MNGMNT which includes features not yet in the released version.
-
-[MNGMNT Beta Demo](https://33a240eb.mngmnt-tasks-app.pages.dev/)
-
-<details>
-  <summary>Click here to see beta features.</summary>
-  
-  ### 1.1.0
-  - Reset the filters back to their default.
-  - Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
-</details>
-
 ## Features
 
-- Task organization in a table display.
+- Task organization in a table or Kanban display.
 - Add, edit, delete tasks.
 - Sort and filter through tasks by column or text.
 - Paginate through tasks to easily find what you're looking for.
 - Refreshed the page or closed your browser? Your data is stored locally and stays there until you return.
 - Load example data to see what it looks like to be really busy.
 - Create your own custom columns. Add and remove columns and they can be text, numbers, or a checkbox.
+- Reset the filters back to their default.
+- Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
 - Subtle animations.
+- Drag task cards in Kanban view for organization and easily change your task's status.
 
 ## Run Locally
 
@@ -62,6 +51,16 @@ Start the server with either one of these three.
 - **host**: Runs the developer version of the project in your LAN, so that it can be accessed via your IP address on other devices, such as mobile phones or other computers.
 
 ## Releases
+
+### 1.2.0
+
+- Can now toggle between table view and Kanban view.
+- Reset the filters back to their default.
+- Want to change multiple tasks quickly? Now you can edit/deletes multiple tasks. Bulk editing only works on the Status and Priority properties.
+- Transparent background modals.
+- Easily delete all of your data
+- New action to quickly delete all of your data.
+- Can now add and edit tasks in kanban view without switching back to table view. Add a task with the Add Task button at the top and bottom of each column, or edit a task by simply clicking on it.
 
 ### 1.1.0
 
