@@ -8,6 +8,9 @@ import { DataContext } from "../../../context/DataContext";
 import { Card } from "../Card/Card";
 import { AddTaskCard } from "../AddTaskCard/AddTaskCard";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -107,7 +110,14 @@ export const KanbanColumn = ({ title, tasks }: IKanbanColumn) => {
         ref={setNodeRef}
         className="flex flex-col justify-start items-center gap-2 w-[70vw] md:w-[500px] my-4 px-4 py-2 min-h-[200px] bg-gray-300 rounded-2xl"
       >
-        <div className=" w-full text-left font-bold">{title}</div>
+        <div className="flex flex-row justify-between items-center w-full">
+          <div className=" w-full text-left font-bold">{title}</div>
+          <FontAwesomeIcon
+            icon={faPlus}
+            onClick={() => openAddTaskModal(title)}
+            className="text-slate-700 text-2xl animate-all hover:scale-[130%] cursor-pointer"
+          />
+        </div>
         {tasksToRender.map((task) => {
           if (!task) return;
           return (
