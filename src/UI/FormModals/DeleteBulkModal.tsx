@@ -5,17 +5,16 @@ interface IModalProps {
   cancelAction: () => void;
 }
 
-const NotificationModal = ({
+export const DeleteBulkModal = ({
   title,
   description = "",
   confirmAction,
   cancelAction,
 }: IModalProps) => {
-  const ConfirmImportData = () => {
-    // Confirms action given
+  const ConfirmDeleteBulk = () => {
     confirmAction();
 
-    // Closes modal
+    // Closes the form
     cancelAction();
   };
 
@@ -29,9 +28,9 @@ const NotificationModal = ({
         onClick={(event) => event.stopPropagation()}
         className="animate-fadeInSlideUp bg-white p-4 rounded-xl w-[90vw] lg:w-[50vw] max-h-[70vh] overflow-y-auto z-10"
       >
-        <form>
+        <div>
           <div className="font-bold text-2xl">{title}</div>
-          <div>{description}</div>
+          <div className="mb-2">{description}</div>
 
           <div className="flex flex-row justify-end items-center w-full gap-4 mt-8 text-lg">
             <button
@@ -42,15 +41,13 @@ const NotificationModal = ({
             </button>
             <button
               className="animate-all bg-sky-400 text-white font-bold px-2 py-1 rounded-lg hover:brightness-75 cursor-pointer"
-              onClick={ConfirmImportData}
+              onClick={ConfirmDeleteBulk}
             >
               Confirm
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
-
-export default NotificationModal;

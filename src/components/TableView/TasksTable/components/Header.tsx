@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp } from "@fortawesome/free-solid-svg-icons";
 
 // Context
-import { DataContext } from "../../../context/DataContext";
+import { DataContext } from "../../../../context/DataContext";
 
 export const Header = () => {
   const context = use(DataContext);
@@ -15,8 +15,13 @@ export const Header = () => {
   }
 
   // Using context
-  const { sortedOrFilteredSettings, changeColumnSorted, customFields } =
-    context;
+  const {
+    sortedOrFilteredSettings,
+    changeColumnSorted,
+    customFields,
+    toggleSelectedTasks,
+    allTasksSelected,
+  } = context;
 
   const sorted = sortedOrFilteredSettings.sorted;
   const caretDirectionUp = sortedOrFilteredSettings.sortedAscending;
@@ -49,6 +54,8 @@ export const Header = () => {
               type="checkbox"
               id="select-all"
               className="w-6 h-6 cursor-pointer"
+              onClick={toggleSelectedTasks}
+              checked={allTasksSelected}
             />
           </div>
         </th>

@@ -1,14 +1,21 @@
 import { createContext } from "react";
 
 // Types
-import { ITask, ISortedFilteredSettings, ICustomField } from "../types/types";
+import {
+  ITask,
+  INewTask,
+  IKanbanTasks,
+  ISortedFilteredSettings,
+  ICustomField,
+} from "../types/types";
 
 interface IDataContextProps {
   tasksData: ITask[] | [];
+  setTasksData: React.Dispatch<React.SetStateAction<ITask[]>>;
   displayedData: ITask[] | [];
   customFields: ICustomField[];
 
-  addTask: (newTask: ITask) => void;
+  addTask: (newTask: INewTask) => void;
   editTask: (editedTask: ITask) => void;
   deleteTask: (deleteTask: ITask) => void;
 
@@ -30,6 +37,20 @@ interface IDataContextProps {
   deleteColumn: (columnToDelete: string) => void;
 
   resetFilters: () => void;
+
+  allTasksSelected: boolean;
+  toggleSelectedTasks: () => void;
+  toggleTask: (selectedTaskID: number) => void;
+  deleteBulkTasks: () => void;
+  editBulkTasks: (column: string, newValue: string) => void;
+
+  kanbanView: boolean;
+  toggleKanbanView: () => void;
+
+  kanbanTasksData: IKanbanTasks;
+  setKanbanTasksData: React.Dispatch<React.SetStateAction<IKanbanTasks>>;
+
+  deleteAllData: () => void;
 }
 
 export const DataContext = createContext<IDataContextProps | undefined>(

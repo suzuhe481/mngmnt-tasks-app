@@ -4,17 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-import EditTaskModal from "../../../UI/FormModals/EditTaskModal";
-import DeleteTaskModal from "../../../UI/FormModals/DeleteTaskModal";
+import EditTaskModal from "../../../../UI/FormModals/EditTaskModal";
+import DeleteTaskModal from "../../../../UI/FormModals/DeleteTaskModal";
 
 // Functions
-import { formatStatus, formatPriority } from "./functions/formatData";
+import { formatPriority } from "./functions/formatData";
 
 // Context
-import { DataContext } from "../../../context/DataContext";
+import { DataContext } from "../../../../context/DataContext";
 
 // Types
-import { ITask } from "../../../types/types";
+import { ITask } from "../../../../types/types";
 
 interface ITaskCard {
   task: ITask;
@@ -33,26 +33,26 @@ export const TaskCard = ({ task }: ITaskCard) => {
   }
 
   // Using context
-  const { editTask, deleteTask, customFields } = context;
+  const { editTask, deleteTask, customFields, toggleTask } = context;
 
   const title = task.title;
-  const status = formatStatus(task.status);
+  const status = task.status;
   const priority = formatPriority(task.priority);
 
   // Title for Edit Task modal.
   const EditTaskTitle = "Edit Task";
 
-  // Opens Add Task Modal
+  // Opens Edit Task Modal
   const openEditTaskModal = () => {
     setEditTaskModalOpen(true);
   };
 
-  // Closes Add Task Modal
+  // Closes Edit Task Modal
   const closeEditTaskModal = () => {
     setEditTaskModalOpen(false);
   };
 
-  // Confirms adding task
+  // Confirms editing a task
   const confirmEditTask = (editedTask: ITask) => {
     editTask(editedTask);
   };
@@ -62,17 +62,17 @@ export const TaskCard = ({ task }: ITaskCard) => {
   const DeleteTaskDescription =
     "Are you sure you want to PERMANENTELY delete this task? ";
 
-  // Opens Add Task Modal
+  // Opens Delete Task Modal
   const openDeleteTaskModal = () => {
     setDeleteTaskModalOpen(true);
   };
 
-  // Closes Add Task Modal
+  // Closes Delete Task Modal
   const closeDeleteTaskModal = () => {
     setDeleteTaskModalOpen(false);
   };
 
-  // Confirms adding task
+  // Confirms deleting a task
   const confirmDeleteTask = (deletedTask: ITask) => {
     deleteTask(deletedTask);
   };
@@ -103,6 +103,8 @@ export const TaskCard = ({ task }: ITaskCard) => {
               type="checkbox"
               id="select"
               className="w-6 h-6 cursor-pointer"
+              checked={task.selected ? task.selected : false}
+              onClick={() => toggleTask(task.id ? task.id : 0)}
             />
           </div>
         </label>

@@ -3,7 +3,7 @@ import { use } from "react";
 import { Header } from "./components/Header";
 import { TaskCard } from "./components/TaskCard";
 
-import { DataContext } from "../../context/DataContext";
+import { DataContext } from "../../../context/DataContext";
 
 export const TasksTable = () => {
   const context = use(DataContext);

@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
 import { exampleData } from "../exampleData/data";
 
-import {
-  formatStatus,
-  formatPriority,
-} from "../components/TasksTable/components/functions/formatData";
+import { formatPriority } from "../components/TableView/TasksTable/components/functions/formatData";
 
 // Types
 import {
   ITask,
+  INewTask,
   ISortedFilteredSettings,
   ICustomField,
   ICustomData,
+  IKanbanTasks,
+  ITaskStatus,
 } from "../types/types";
 
 interface IDataProviderProps {
@@ -36,6 +36,26 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     }
   });
 
+  const [kanbanTasksData, setKanbanTasksData] = useState<IKanbanTasks>(() => {
+    const storedTasks = localStorage.getItem("kanbanTasksData");
+
+    // Get tasks from localStorage
+    if (storedTasks) {
+      return JSON.parse(storedTasks);
+    }
+    // If no data, create empty ITask[]
+    else {
+      const emptyKanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      localStorage.setItem("kanbanTasksData", JSON.stringify(emptyKanbanTasks));
+      return emptyKanbanTasks;
+    }
+  });
+
   // Gets and sets schema for customFields in localStorage
   const [customFields, setCustomFields] = useState<ICustomField[]>(() => {
     const storedCustomFields = localStorage.getItem("customFields");
@@ -52,7 +72,8 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   });
 
   // Stores some settings in localStorage
-  // Sotres currentIndex
+  // Sorts currentIndex
+  // INDEX STARTS AT 1
   const [settings, setSettings] = useState(() => {
     const storedSettings = localStorage.getItem("settings");
 
@@ -71,9 +92,11 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
   // Can be filtered, sorted, and paginated.
   const [displayedData, setDisplayedData] = useState<ITask[] | []>([]);
 
-  // Stores id to be used as new tasks are added.
-  // INDEX STARTS AT 1
-  // const [currentIndex, setCurrentIndex] = useState<number>(1);
+  // Determines whether tasks are displayed in table view or kanban view.
+  const [kanbanView, setKanbanView] = useState<boolean>(false);
+
+  // Stores if all tasks have been selected.
+  const [allTasksSelected, setAllTasksSelected] = useState<boolean>(false);
 
   // Pagination variables
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -93,8 +116,29 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     });
 
   // Adds a new task to tasksData.
-  const addTask = (newTask: ITask) => {
+  const addTask = (task: INewTask) => {
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
     // Adding id to task, increment id, save to state and localstorage
+    const newTask: ITask = {
+      id: settings.currentIndex,
+      ...task,
+    };
+
     newTask.id = settings.currentIndex;
     const newSettings = settings;
     newSettings.currentIndex++;
@@ -107,9 +151,30 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     // Adds task
     updatedTasksData.push(newTask);
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    newTask.status = mapStatusToITaskStatus(newTask.status);
+
+    setDisplayedData(paginatedTasks);
+
+    // Creates shallow copy of kanbanTasksData
+    const updatedKanbanTasks: IKanbanTasks = { ...kanbanTasksData };
+
+    // Adds task
+    updatedKanbanTasks[newTask.status].push(newTask);
+
     // Save tasks
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
@@ -124,8 +189,44 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return task.id === editTask.id ? { ...task, ...editTask } : task;
     });
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    // Saves tasks for table view
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id === editTask.id) {
+          // If status changed, push to the new status column
+          updatedKanbanTasks[editTask.status].push({
+            ...task,
+            ...editTask,
+          });
+        } else {
+          // Keep original task
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Edits an existing task in tasksData.
@@ -135,13 +236,49 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       return;
     }
 
-    // Updates the task at the id of editTask.id.
+    // Updates the task at the id of deleteTask.id.
     const updatedTasksData = tasksData.filter((task) => {
       return task.id !== deleteTask.id;
     });
 
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
+
     setTasksData(updatedTasksData);
     localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    // Creates updated kanbanTasksData with deleted task
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (task.id !== deleteTask.id) {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    // Save kanban tasks
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
   };
 
   // Updates sorting/filtering settings when a column is clicked.
@@ -218,9 +355,9 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     const sortedAsc = newSettings.sortedAscending;
 
     const statusOrder: { [key: string]: number } = {
-      not_started: 1,
-      in_progress: 2,
-      completed: 3,
+      "Not Started": 1,
+      "In Progress": 2,
+      Completed: 3,
     };
 
     const sortedByStatus = sortedAndFilteredTasks.sort((a, b) => {
@@ -394,9 +531,7 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
     const filteredTasks = sortedAndFilteredTasks.filter((task) => {
       const titleMatch = task.title.toLowerCase().includes(filterText);
-      const statusMatch = formatStatus(task.status)
-        .toLowerCase()
-        .includes(filterText);
+      const statusMatch = task.status.toLowerCase().includes(filterText);
       const priorityMatch = formatPriority(task.priority)
         .toLowerCase()
         .includes(filterText);
@@ -500,10 +635,56 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
 
   // Imports example data
   const importExampleData = () => {
-    setTasksData(exampleData);
+    const mapStatusToITaskStatus = (status: string): ITaskStatus => {
+      switch (status) {
+        case "not_started":
+        case "Not Started":
+          return "Not Started";
+        case "in_progress":
+        case "In Progress":
+          return "In Progress";
+        case "completed":
+        case "Completed":
+          return "Completed";
+        default:
+          throw new Error(`Invalid status: ${status}`);
+      }
+    };
+
+    const mappingTasksForKanban = (tasks: ITask[]) => {
+      const kanbanTasks: IKanbanTasks = {
+        "Not Started": [],
+        "In Progress": [],
+        Completed: [],
+      };
+
+      tasks.forEach((task: ITask) => {
+        kanbanTasks[mapStatusToITaskStatus(task.status)].push(task);
+      });
+
+      return kanbanTasks;
+    };
+
+    const mappedExampleData = exampleData.map((task) => ({
+      ...task,
+      status: mapStatusToITaskStatus(task.status),
+    }));
+
+    setTasksData(mappedExampleData);
+
+    const mappedKanbanTasks = mappingTasksForKanban(mappedExampleData);
+
+    setKanbanTasksData(mappedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(mappedKanbanTasks));
 
     // Resets custom fields
     setCustomFields([]);
+
+    // Saving new index based on example data
+    const newSettings = settings;
+    newSettings.currentIndex = mappedExampleData.length + 1;
+    setSettings(newSettings);
+    localStorage.setItem("settings", JSON.stringify(newSettings));
 
     // Paginate using current settings before storing as displayed.
     const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
@@ -601,6 +782,192 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
     sortAndFilter(resetFilters);
   };
 
+  // Toggles every tasks's selected state between true/false
+  const toggleSelectedTasks = () => {
+    // Sets all task's selected to false.
+    if (allTasksSelected) {
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: false };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(false);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    } else {
+      // Sets all tasks's selected to true.
+      const updatedTasks = tasksData.map((task) => {
+        return { ...task, selected: true };
+      });
+
+      setTasksData(updatedTasks);
+      setAllTasksSelected(true);
+
+      setTasksData(updatedTasks);
+      localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+    }
+  };
+
+  // Toggles a single task's selected property between true/false
+  const toggleTask = (selectedTaskID: number) => {
+    const updatedTasks = tasksData.map((task) => {
+      return task.id === selectedTaskID
+        ? { ...task, selected: !task.selected }
+        : task;
+    });
+
+    setTasksData(updatedTasks);
+    setAllTasksSelected(false);
+
+    setTasksData(updatedTasks);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasks));
+  };
+
+  // Deletes all selected tasks
+  const deleteBulkTasks = () => {
+    // Filters out selected tasks.
+    const updatedTasksData = tasksData
+      .filter((task) => {
+        return !task.selected;
+      })
+      // Sets all task's selected to false
+      .map((task) => {
+        return { ...task, selected: false };
+      });
+
+    const deletedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
+
+    setAllTasksSelected(false);
+
+    // Resets currentIndex to 1 if all tasks were deleted
+    if (updatedTasksData.length === 0) {
+      const newSettings = settings;
+      newSettings.currentIndex = 1;
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    }
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      updatedKanbanTasks[status as ITaskStatus] = tasks.filter(
+        (task: ITask) => !deletedTaskIds.includes(task.id)
+      );
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
+  };
+
+  // Edits all selected tasks on the given with the given value
+  const editBulkTasks = (column: string, newValue: string) => {
+    // Changing only the selected tasks to the the given newValue on the given column
+    // Unselects task
+    const updatedTasksData = tasksData.map((task) => {
+      return task.selected
+        ? { ...task, selected: false, [column]: newValue }
+        : task;
+    });
+
+    // IDs of tasks that will be edited
+    const editedTaskIds = tasksData
+      .filter((task) => {
+        return task.selected;
+      })
+      .map((task) => {
+        return task.id;
+      });
+
+    setAllTasksSelected(false);
+
+    // Paginate using current settings before storing as displayed.
+    const paginatedTasks = paginateTasks(
+      updatedTasksData,
+      currentPage,
+      pageSize
+    );
+
+    setDisplayedData(paginatedTasks);
+
+    setTasksData(updatedTasksData);
+    localStorage.setItem("tasksData", JSON.stringify(updatedTasksData));
+
+    const updatedKanbanTasks: IKanbanTasks = {
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    };
+
+    Object.entries(kanbanTasksData).forEach(([status, tasks]) => {
+      tasks.forEach((task: ITask) => {
+        if (editedTaskIds.includes(task.id)) {
+          const updatedTask = {
+            ...task,
+            selected: false,
+            [column]: newValue,
+          };
+
+          const targetStatus =
+            column === "status"
+              ? (newValue as ITaskStatus)
+              : (task.status as ITaskStatus);
+
+          updatedKanbanTasks[targetStatus].push(updatedTask);
+        } else {
+          updatedKanbanTasks[status as ITaskStatus].push(task);
+        }
+      });
+    });
+
+    setKanbanTasksData(updatedKanbanTasks);
+    localStorage.setItem("kanbanTasksData", JSON.stringify(updatedKanbanTasks));
+  };
+
+  // Toggles switching between table and kanban view
+  const toggleKanbanView = () => {
+    setKanbanView((prev) => !prev);
+  };
+
+  // Deletes all data from localStorage and resets state.
+  const deleteAllData = () => {
+    setTasksData([]);
+    setKanbanTasksData({
+      "Not Started": [],
+      "In Progress": [],
+      Completed: [],
+    });
+    setSettings({ currentIndex: 1 });
+    setCustomFields([]);
+
+    localStorage.removeItem("tasksData");
+    localStorage.removeItem("kanbanTasksData");
+    localStorage.removeItem("settings");
+    localStorage.removeItem("customFields");
+  };
+
   // useEffect to sync tasksData with localStorage
   useEffect(() => {
     if (tasksData && tasksData.length > 0) {
@@ -609,13 +976,18 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
       // Paginate using current settings before storing as displayed.
       const paginatedTasks = paginateTasks(tasksData, currentPage, pageSize);
       setDisplayedData(paginatedTasks);
+    } else {
+      setDisplayedData([]);
     }
-  }, [tasksData, currentPage, pageSize]);
+  }, [tasksData, kanbanTasksData, currentPage, pageSize, settings]);
 
   return (
     <DataContext.Provider
       value={{
         tasksData,
+        setTasksData,
+        kanbanTasksData,
+        setKanbanTasksData,
         displayedData,
         addTask,
         editTask,
@@ -635,6 +1007,14 @@ export const DataProvider: React.FC<IDataProviderProps> = ({ children }) => {
         deleteColumn,
         customFields,
         resetFilters,
+        allTasksSelected,
+        toggleSelectedTasks,
+        toggleTask,
+        deleteBulkTasks,
+        editBulkTasks,
+        kanbanView,
+        toggleKanbanView,
+        deleteAllData,
       }}
     >
       {children}

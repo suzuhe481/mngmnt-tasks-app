@@ -1,19 +1,21 @@
-import { Header } from "./components/Header/Header";
-import { Actions } from "./components/Actions/Actions";
-import { Search } from "./components/Search/Search";
-import { TasksTable } from "./components/TasksTable/TasksTable";
-import { Pagination } from "./components/PaginationControls/Pagination";
+import { use } from "react";
+
+import { TableView } from "./components/TableView/TableView";
+import { KanbanView } from "./components/KanbanView/KanbanView";
+
+import { DataContext } from "./context/DataContext";
 
 function App() {
-  return (
-    <div className="w-full">
-      <Header />
-      <Actions />
-      <Search />
-      <TasksTable />
-      <Pagination />
-    </div>
-  );
+  const context = use(DataContext);
+
+  // Checks for undefined context.
+  if (!context) {
+    return;
+  }
+
+  const { kanbanView } = context;
+
+  return <>{kanbanView ? <KanbanView /> : <TableView />};</>;
 }
 
 export default App;
